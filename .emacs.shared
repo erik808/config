@@ -125,6 +125,11 @@
 ;;;;========== color theme ==================================
 (if (eq window-system 'x)
 	(load-theme 'monokai_custom t))
+;; inline latex should conform to the theme
+;;  (not sure if this is necessary)
+;;(setq latex-math-preview-dvipng-color-option nil)
+;;(setq latex-math-preview-image-foreground-color "#FFF39F")
+;;(setq latex-math-preview-image-background-color "#FF7E80")
 ;;;;=========================================================
 
 ;; ======== sr-speedbar =====================================
@@ -167,36 +172,3 @@
 ;;================ height of status bar   ====================================
 (set-face-attribute 'mode-line nil :height 90)
 ;;============================================================================
-
-;;========================= Customized stuff =================================
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(custom-safe-themes (quote ("266fc5aadc115494332cecee0f45b51f65950932b34ed95f82f5c7673621308d" "756597b162f1be60a12dbd52bab71d40d6a2845a3e3c2584c6573ee9c332a66e" "7836341c5cf90dbc0370e8d1112cfba0b3fa945051cd9f97eb35d7968d85e265" "eaa654d1342e71468b516a2eaf14931698f25b501e21c4a9260890d07b2d43b1" "b777c9055316d6b57c96f1b8788ea55c2fb7d23744e4ae6a997e7969b547cfea" "fc5fcb6f1f1c1bc01305694c59a1a861b008c534cae8d0e48e4d5e81ad718bc6" "1e7e097ec8cb1f8c3a912d7e1e0331caeed49fef6cff220be63bd2a6ba4cc365" "124add37965936ba44198f828294074663b27965c15cdbacd61a9fe8572314cf" "71c16f883fbdfeb656b33c63ad109bb6d7ed2fe2226451fb8253774ea3ee5f02" default)))
- '(font-use-system-font t)
- '(org-export-latex-packages-alist (quote ("\\newcommand{\\D}[3]{\\ensuremath{\\frac{\\partial^{#1} {#2}}{\\partial {#3}^{#1}}}}" "\\newcommand{\\bvec}[1]{\\ensuremath{\\mathbf{#1}}}")))
- '(org-file-apps (quote ((auto-mode . emacs) ("\\.mm\\'" . default) ("\\.x?html?\\'" . default) ("\\.pdf\\'" . system) ("\\.eps\\'" . system))))
- '(org-format-latex-options (quote (:foreground default :background default :scale 1.7 :html-foreground "Black" :html-background "Transparent" :html-scale 1.0 :matchers ("begin" "$1" "$" "$$" "\\(" "\\["))))
- '(preview-auto-reveal t)
- '(preview-default-document-pt 12)
- '(tool-bar-mode nil)
- '(transient-mark-mode (quote (only . t))))
-
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(which-func ((t (:inherit font-lock-function-name-face :background "gray22" :foreground "dark orange"))))
- '(whitespace-empty ((t nil)) t)
- '(whitespace-hspace ((t nil)) t)
- '(whitespace-indentation ((t nil)) t)
- '(whitespace-line ((t (:foreground "violet"))) t)
- '(whitespace-newline ((t (:foreground "gray12" :weight normal))) t)
- '(whitespace-space ((t (:foreground "gray11"))) t)
- '(whitespace-space-after-tab ((t nil)) t)
- '(whitespace-space-before-tab ((t nil)) t)
- '(whitespace-tab ((t (:foreground "gray11"))) t)
- '(whitespace-trailing ((t (:weight bold))) t))
