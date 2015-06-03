@@ -1,0 +1,139 @@
+(add-to-list 'load-path "~/.emacs.d")
+
+;; Package manager
+(require 'package)
+(add-to-list 'package-archives
+             '("melpa" . "http://melpa.org/packages/") t)
+(package-initialize)
+
+;; Anything
+(global-set-key (kbd "C-x C-a") 'anything)
+(global-set-key (kbd "M-x") 'helm-M-x)
+(global-set-key (kbd "C-x f") 'helm-for-files)
+(global-set-key (kbd "C-x C-f") 'helm-find-files)
+(global-set-key (kbd "C-x C-b") 'helm-buffers-list)
+
+;; Don't open 1000000 emacs instances (workflow!!)
+(setq ns-pop-up-frames nil)
+
+;; Disable secondary overlay crap
+(global-unset-key [M-mouse-1])
+(global-unset-key [M-drag-mouse-1])
+(global-unset-key [M-down-mouse-1])
+(global-unset-key [M-mouse-3])
+(global-unset-key [M-mouse-2])
+
+;; Line numbers
+(global-linum-mode 1)
+(setq linum-format "%d")
+
+;; Bracket highlighting
+(show-paren-mode 1)
+
+;; Refresh
+(global-auto-revert-mode 1)
+
+;; Recent file buffer
+(require 'recentf)
+(recentf-mode 1)
+(setq recentf-max-menu-items 100)
+(global-set-key "\C-x\ \C-r" 'recentf-open-files)
+
+;; Newline indent
+(define-key global-map (kbd "RET") 'newline-and-indent)
+
+;; Auto complete
+(require 'auto-complete)
+(global-auto-complete-mode t)
+(require 'auto-complete-config)
+(ac-config-default)
+(setq ac-source-yasnippet nil)
+(setq ac-auto-show-menu nil)
+(define-key ac-completing-map [down] nil)
+(define-key ac-completing-map [up] nil)
+
+;; IRC notifications
+(add-to-list 'erc-modules 'notifications)
+
+;; Eval .emacs
+(defun eval-emacs ()
+  (interactive)
+  (load-file "~/.emacs"))
+(global-set-key (kbd "C-c e") 'eval-emacs)
+
+;; Commenting
+(defun comment-region-lines ()
+  (interactive)
+  (let ((start (line-beginning-position))
+        (end (line-end-position)))
+    (when (or (not transient-mark-mode) (region-active-p))
+      (setq start (save-excursion
+                    (goto-char (region-beginning))
+                    (beginning-of-line)
+                    (point))
+            end (save-excursion
+                  (goto-char (region-end))
+                  (end-of-line)
+                  (point))))
+    (comment-or-uncomment-region start end)))
+
+;; Suggested binding
+(global-set-key (kbd "C-c c") 'comment-region-lines)
+
+;; Indenting
+(defconst jonas-style
+  '("whitesmith"
+    (c-offsets-alist . ((innamespace . [0])))
+    (c-basic-offset . 2)))
+
+(c-add-style "jonas-style" jonas-style)
+(setq c-default-style "jonas-style")
+
+(defconst sven-style
+  '("K&R"
+    (c-offsets-alist . ((innamespace . [0])))
+    (c-basic-offset . 4)))
+
+(c-add-style "sven-style" sven-style)
+
+(defconst sven2-style
+  '("K&R"
+    (c-offsets-alist . ((innamespace . [0])))
+    (c-basic-offset . 2)))
+
+(c-add-style "sven2-style" sven2-style)
+
+;; Tabs are spaces
+(setq-default indent-tabs-mode nil)
+
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(ansi-color-names-vector ["#242424" "#e5786d" "#95e454" "#cae682" "#8ac6f2" "#333366" "#ccaa8f" "#f6f3e8"])
+ '(column-number-mode t)
+ '(custom-enabled-themes (quote (ample)))
+ '(custom-safe-themes (quote ("ffe39e540469ef05808ab4b75055cc81266875fa4a0d9e89c2fec1da7a6354f3" default)))
+ '(global-whitespace-mode t)
+ '(inhibit-startup-screen t)
+ '(show-paren-mode t)
+ '(size-indication-mode t)
+ '(tool-bar-mode nil)
+ '(uniquify-buffer-name-style (quote forward) nil (uniquify))
+ '(whitespace-line-column 8000))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(whitespace-empty ((t (:foreground "gray25"))))
+ '(whitespace-hspace ((t (:foreground "gray25"))))
+ '(whitespace-indentation ((t (:foreground "gray25"))))
+ '(whitespace-line ((t nil)))
+ '(whitespace-newline ((t (:foreground "gray25"))))
+ '(whitespace-space ((t (:foreground "gray25"))))
+ '(whitespace-space-after-tab ((t (:foreground "gray25"))))
+ '(whitespace-space-before-tab ((t (:foreground "gray25"))))
+ '(whitespace-tab ((t (:foreground "gray25"))))
+ '(whitespace-trailing ((t (:foreground "gray25" :weight bold)))))
