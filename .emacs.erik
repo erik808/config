@@ -127,16 +127,6 @@
 (setq fci-rule-color "gray")
 ;;==========================================================
 
-;;;;========== color theme ==================================
-(if (eq window-system 'x)
-	(load-theme 'monokai_custom t))
-;; inline latex should conform to the theme
-;;  (not sure if this is necessary)
-;;(setq latex-math-preview-dvipng-color-option nil)
-;;(setq latex-math-preview-image-foreground-color "#FFF39F")
-;;(setq latex-math-preview-image-background-color "#FF7E80")
-;;;;=========================================================
-
 ;; ======== sr-speedbar =====================================
 (require 'sr-speedbar)
 (global-set-key (kbd "s-s") 'sr-speedbar-toggle)
