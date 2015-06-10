@@ -1,0 +1,179 @@
+
+;;==================== Notes ================================================
+;; Some package dependencies:
+;;  - GNU global
+;;  - Exuberant ctags
+;;
+;; byte recompiling elpa:
+;; (byte-recompile-directory (expand-file-name "~/.emacs.d/elpa") 0 t)
+;;===========================================================================
+
+(add-to-list 'load-path "~/.emacs.d")
+(add-to-list 'load-path "~/.emacs.d/emacs-color-theme-solarized-master/")
+(add-to-list 'custom-theme-load-path "~/.emacs.d/emacs-color-theme-solarized-master/")
+(add-to-list 'custom-theme-load-path "~/config")
+
+;;======================== Package manager =====================================
+(require 'package)
+(add-to-list 'package-archives
+			 '("marmalade" .
+			   "http://marmalade-repo.org/packages/"))
+(add-to-list 'package-archives
+             '("melpa-stable" . "http://stable.melpa.org/packages/") t)
+(package-initialize)
+;;==============================================================================
+
+;;=============== Some modes ===============================================
+(scroll-bar-mode -1)
+(tool-bar-mode -1)
+(menu-bar-mode -1)
+(savehist-mode 1)
+(show-paren-mode 1)
+(which-func-mode 1)
+(global-linum-mode -1)
+(column-number-mode 1)
+(global-auto-revert-mode t)
+;;===========================================================================
+
+;;=============== Smooth scrolling =====================================
+;; scroll one line at a time (less "jumpy" than defaults)
+(setq mouse-wheel-scroll-amount '(2 ((shift) . 1))) ;; one line at a time
+(setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
+(setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
+(setq scroll-step 2) ;; keyboard scroll one line at a time
+;;======================================================================
+
+;;========================= org-mode ==========================
+(require 'org)
+(define-key global-map "\C-cl" 'org-store-link)
+(define-key global-map "\C-ca" 'org-agenda)
+(setq org-log-done t)
+(setq org-agenda-files (list "~/Dropbox/todo.org"))
+
+;; get tikz pictures to preview
+(eval-after-load "preview"
+  '(add-to-list 'preview-default-preamble "\\PreviewEnvironment{tikzpicture}" t))
+(setq org-latex-create-formula-image-program 'imagemagick)
+;;=============================================================
+
+(define-key global-map (kbd "RET") 'newline-and-indent)
+
+(setq-default c-default-style "linux"
+			  tab-width 4
+			  c-basic-offset 4
+			  inden-tabs-mode t)
+
+(setq inhibit-startup-screen t)
+(setq linum-format "%d ")
+
+;;========== printing =====================================
+(setq ps-print-color-p 'color)
+(setq ps-number-of-columns 1)
+(setq ps-font-size 10)
+(setq ps-line-number t)
+(setq ps-line-number-font-size 7)
+(setq ps-line-number-font 'Courier)
+(setq ps-line-number-step 1)
+;;=========================================================
+
+;;========== multiple cursors =============================
+(require 'multiple-cursors)
+(global-set-key (kbd "C-M-d") 'mc/mark-next-like-this)
+(global-set-key (kbd "C-M-s") 'mc/mark-previous-like-this)
+;;=========================================================
+
+;;============= commenting ================================
+(defun comment-eclipse ()
+  (interactive)
+  (let ((start (line-beginning-position))
+        (end (line-end-position)))
+    (when (or (not transient-mark-mode) (region-active-p))
+      (setq start (save-excursion
+                    (goto-char (region-beginning))
+                    (beginning-of-line)
+                    (point))
+            end (save-excursion
+                  (goto-char (region-end))
+                  (end-of-line)
+                  (point))))
+    (comment-or-uncomment-region start end)))
+(global-set-key (kbd "C-c c") 'comment-eclipse)
+;;=========================================================
+
+;;---------- switch between header and implementation -----
+(global-set-key (kbd "C-c f") 'ff-find-other-file)
+;;---------- expand region --------------------------------
+(require 'expand-region)
+(global-set-key (kbd "C-c e") 'er/expand-region)
+;;---------------------------------------------------------
+
+;;===================== helm ================================
+(add-to-list 'load-path "~/.emacs.d/helm/")
+(require 'helm-config)
+(require 'helm)
+(global-set-key (kbd "M-x") 'helm-M-x)
+(global-set-key (kbd "C-x f") 'helm-for-files)
+(global-set-key (kbd "C-x C-b") 'helm-buffers-list)
+(setq helm-display-header-line nil)
+(set-face-attribute 'helm-source-header nil :height .8)
+(helm-autoresize-mode 1)
+(setq helm-autoresize-max-height 30)
+(setq helm-autoresize-min-height 30)
+;;===========================================================
+
+;;========= fill column  ===================================
+(require 'fill-column-indicator)
+(setq fci-rule-column 83)
+(setq fci-rule-color "gray")
+;;==========================================================
+
+;;;;========== color theme ==================================
+(if (eq window-system 'x)
+	(load-theme 'monokai_custom t))
+;; inline latex should conform to the theme
+;;  (not sure if this is necessary)
+;;(setq latex-math-preview-dvipng-color-option nil)
+;;(setq latex-math-preview-image-foreground-color "#FFF39F")
+;;(setq latex-math-preview-image-background-color "#FF7E80")
+;;;;=========================================================
+
+;; ======== sr-speedbar =====================================
+(require 'sr-speedbar)
+(global-set-key (kbd "s-s") 'sr-speedbar-toggle)
+(setq sr-speedbar-right-side nil)
+;; ==========================================================
+
+;; ============= Ctrl-Tab  ==================================
+(global-set-key (kbd "s-a") 'other-window)
+;; ==========================================================
+
+;; ============= AucTeX stuff ===============================
+(setq-default TeX-master "main")
+(setq-default TeX-command-default "LaTeX")
+(setq-default TeX-PDF-mode t)
+;; ==========================================================
+
+;; ================ auto complete ===========================
+(require 'auto-complete)
+(global-auto-complete-mode t)
+(require 'auto-complete-config)
+(ac-config-default)
+(setq ac-source-yasnippet nil)
+;; ==========================================================
+
+;;========= ggtags == =====================================
+(require 'ggtags)
+(add-hook 'c-mode-common-hook
+          (lambda ()
+            (when (derived-mode-p 'c-mode 'c++-mode 'java-mode 'f90-mode)
+              (ggtags-mode 1))))
+;;=========================================================
+
+;;============== move text ======================================
+(global-set-key (kbd "M-<up>") 'move-text-up)
+(global-set-key (kbd "M-<down>") 'move-text-down)
+;;===============================================================
+
+;;================ height of status bar   ====================================
+(set-face-attribute 'mode-line nil :height 90)
+;;============================================================================
