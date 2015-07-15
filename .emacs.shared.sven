@@ -8,6 +8,20 @@
              '("elpy" . "http://jorgenschaefer.github.io/packages/"))
 (package-initialize)
 
+(defun install-missing ()
+  (interactive)
+  ;; list the packages you want
+  (setq package-list '(ample-theme helm elpy multiple-cursors auto-complete))
+
+  ;; fetch the list of packages available 
+  (unless package-archive-contents
+    (package-refresh-contents))
+
+  ;; install the missing packages
+  (dolist (package package-list)
+    (unless (package-installed-p package)
+      (package-install package))))
+
 ;;Helm
 (global-set-key (kbd "M-x") 'helm-M-x)
 (global-set-key (kbd "C-x f") 'helm-for-files)
