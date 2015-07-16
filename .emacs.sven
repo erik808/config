@@ -13,14 +13,19 @@
   ;; list the packages you want
   (setq package-list '(ample-theme helm elpy multiple-cursors auto-complete))
 
-  ;; fetch the list of packages available 
-  (unless package-archive-contents
-    (package-refresh-contents))
+  ;; fetch the list of packages available
+  (package-refresh-contents)
 
   ;; install the missing packages
   (dolist (package package-list)
     (unless (package-installed-p package)
       (package-install package))))
+
+;; Eval .emacs
+(defun eval-emacs ()
+  (interactive)
+  (load-file "~/.emacs"))
+(global-set-key (kbd "C-c e") 'eval-emacs)
 
 ;;Helm
 (global-set-key (kbd "M-x") 'helm-M-x)
@@ -31,12 +36,6 @@
 
 ;; Don't open 1000000 emacs instances (workflow!!)
 (setq ns-pop-up-frames nil)
-
-;; Eval .emacs
-(defun eval-emacs ()
-  (interactive)
-  (load-file "~/.emacs"))
-(global-set-key (kbd "C-c e") 'eval-emacs)
 
 ;; Fancy replace tjak
 (require 'multiple-cursors)
