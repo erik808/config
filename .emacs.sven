@@ -8,6 +8,12 @@
              '("elpy" . "http://jorgenschaefer.github.io/packages/"))
 (package-initialize)
 
+;; Eval .emacs
+(defun eval-emacs ()
+  (interactive)
+  (load-file "~/.emacs"))
+(global-set-key (kbd "C-c e") 'eval-emacs)
+
 (defun install-missing ()
   (interactive)
   ;; list the packages you want
@@ -19,15 +25,12 @@
   ;; install the missing packages
   (dolist (package package-list)
     (unless (package-installed-p package)
-      (package-install package))))
+      (package-install package)))
 
-;; Eval .emacs
-(defun eval-emacs ()
-  (interactive)
-  (load-file "~/.emacs"))
-(global-set-key (kbd "C-c e") 'eval-emacs)
+  (eval-emacs))
 
 ;;Helm
+(require 'helm)
 (global-set-key (kbd "M-x") 'helm-M-x)
 (global-set-key (kbd "C-x f") 'helm-for-files)
 (global-set-key (kbd "C-x C-f") 'helm-find-files)
