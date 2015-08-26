@@ -1,0 +1,2 @@
+(fset 'cout
+	  (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([1 tab 115 116 100 58 58 99 111 117 116 32 60 60 32 60 60 33554464 115 116 100 58 58 101 110 100 108 59 left left left left left left left left left left left left left 34 34 32 left left] 0 "%d")) arg)))

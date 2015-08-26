@@ -112,6 +112,7 @@
 (require 'helm-config)
 (require 'helm)
 (global-set-key (kbd "M-x") 'helm-M-x)
+(global-set-key (kbd "M-X") 'execute-extended-command)
 (global-set-key (kbd "C-x f") 'helm-for-files)
 (global-set-key (kbd "C-x C-b") 'helm-buffers-list)
 (setq helm-display-header-line nil)
@@ -151,13 +152,13 @@
 (setq ac-source-yasnippet nil)
 ;; ==========================================================
 
-;;========= ggtags == =====================================
+;;========= ggtags == ===========================================
 (require 'ggtags)
 (add-hook 'c-mode-common-hook
           (lambda ()
             (when (derived-mode-p 'c-mode 'c++-mode 'java-mode 'f90-mode)
               (ggtags-mode 1))))
-;;=========================================================
+;;===============================================================
 
 ;;============== move text ======================================
 (global-set-key (kbd "M-<up>") 'move-text-up)
@@ -166,4 +167,8 @@
 
 ;;================ height of status bar   =======================
 (set-face-attribute 'mode-line nil :height 90)
+;;===============================================================
+
+;;===================== transparancy ============================
+(set-frame-parameter (selected-frame) 'alpha '(97 97))
 ;;===============================================================
