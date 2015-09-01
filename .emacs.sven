@@ -4,17 +4,54 @@
 (require 'package)
 (add-to-list 'package-archives
              '("melpa" . "http://melpa.org/packages/") t)
+(add-to-list 'package-archives
+             '("elpy" . "http://jorgenschaefer.github.io/packages/"))
 (package-initialize)
 
-;; Anything
-(global-set-key (kbd "C-x C-a") 'anything)
+;; Eval .emacs
+(defun eval-emacs ()
+  (interactive)
+  (load-file "~/.emacs"))
+(global-set-key (kbd "C-c e") 'eval-emacs)
+
+(defun install-missing ()
+  (interactive)
+  ;; list the packages you want
+  (setq package-list '(ample-theme helm elpy multiple-cursors auto-complete))
+
+  ;; fetch the list of packages available
+  (package-refresh-contents)
+
+  ;; install the missing packages
+  (dolist (package package-list)
+    (unless (package-installed-p package)
+      (package-install package)))
+
+  (eval-emacs))
+
+;;Helm
+(require 'helm)
 (global-set-key (kbd "M-x") 'helm-M-x)
 (global-set-key (kbd "C-x f") 'helm-for-files)
 (global-set-key (kbd "C-x C-f") 'helm-find-files)
 (global-set-key (kbd "C-x C-b") 'helm-buffers-list)
+(setq-default helm-buffer-max-length nil)
 
 ;; Don't open 1000000 emacs instances (workflow!!)
 (setq ns-pop-up-frames nil)
+
+;; Fancy replace tjak
+(require 'multiple-cursors)
+(global-set-key (kbd "C->") 'mc/mark-next-like-this)
+(global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
+(global-set-key (kbd "C-c C->") 'mc/mark-all-like-this)
+
+;; LaTeX
+(setq-default TeX-command-default "LaTeX")
+(setq-default TeX-PDF-mode t)
+(eval-after-load "tex"
+  '(add-to-list 'TeX-command-list
+                '("Rubber" "rubber -d %t" TeX-run-command nil t) t))
 
 ;; Disable secondary overlay crap
 (global-unset-key [M-mouse-1])
@@ -22,6 +59,14 @@
 (global-unset-key [M-down-mouse-1])
 (global-unset-key [M-mouse-3])
 (global-unset-key [M-mouse-2])
+
+;; Python mode
+(require 'elpy)
+(elpy-enable)
+
+;; Python aut-complete
+(add-hook 'python-mode-hook 'jedi:setup)
+(setq jedi:complete-on-dot t)
 
 ;; Line numbers
 (global-linum-mode 1)
@@ -52,14 +97,16 @@
 (define-key ac-completing-map [down] nil)
 (define-key ac-completing-map [up] nil)
 
-;; IRC notifications
-(add-to-list 'erc-modules 'notifications)
+;; Scrolling
+(setq-default scroll-preserve-screen-position t)
+(setq-default mouse-wheel-progressive-speed nil)
 
-;; Eval .emacs
-(defun eval-emacs ()
+;; Daemon shutdown
+(defun server-shutdown ()
+  "Save buffers, Quit, and Shutdown (kill) server"
   (interactive)
-  (load-file "~/.emacs"))
-(global-set-key (kbd "C-c e") 'eval-emacs)
+  (save-some-buffers)
+  (kill-emacs))
 
 ;; Commenting
 (defun comment-region-lines ()
