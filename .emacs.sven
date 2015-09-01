@@ -49,6 +49,9 @@
 ;; LaTeX
 (setq-default TeX-command-default "LaTeX")
 (setq-default TeX-PDF-mode t)
+(eval-after-load "tex"
+  '(add-to-list 'TeX-command-list
+                '("Rubber" "rubber -d %t" TeX-run-command nil t) t))
 
 ;; Disable secondary overlay crap
 (global-unset-key [M-mouse-1])
@@ -97,6 +100,13 @@
 ;; Scrolling
 (setq-default scroll-preserve-screen-position t)
 (setq-default mouse-wheel-progressive-speed nil)
+
+;; Daemon shutdown
+(defun server-shutdown ()
+  "Save buffers, Quit, and Shutdown (kill) server"
+  (interactive)
+  (save-some-buffers)
+  (kill-emacs))
 
 ;; Commenting
 (defun comment-region-lines ()
