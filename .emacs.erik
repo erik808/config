@@ -156,13 +156,17 @@
 (setq-default TeX-PDF-mode t)
 ;; ==========================================================
 
-;; ================ auto complete ===========================
-(require 'auto-complete)
-(global-auto-complete-mode t)
-(require 'auto-complete-config)
-(ac-config-default)
-(setq ac-source-yasnippet nil)
+;; ================ auto complete !disabled! ================
+;;(require 'auto-complete)
+;;(global-auto-complete-mode t)
+;;(require 'auto-complete-config)
+;;(ac-config-default)
+;;(setq ac-source-yasnippet nil)
 ;; ==========================================================
+
+;; ================ complete any mode =======================
+(add-hook 'after-init-hook 'global-company-mode)
+;; ================ complete any mode =======================
 
 ;;========= ggtags == ===========================================
 (require 'ggtags)
