@@ -151,7 +151,7 @@
 ;; ==========================================================
 
 ;; ============= AucTeX stuff ===============================
-(setq-default TeX-master "main")
+(setq-default TeX-master t)
 (setq-default TeX-command-default "LaTeX")
 (setq-default TeX-PDF-mode t)
 ;; ==========================================================
