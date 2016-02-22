@@ -20,10 +20,9 @@
 (defun fill-sentence()
   (interactive)
   (save-excursion
-    (fill-paragraph)         ; takes care of putting 2 spaces if needed
-    (unfill-paragraph)  ; remove hard line breaks
+    (fill-paragraph)
+    (unfill-paragraph)
 
-    ;; insert line breaks again
     (let ((end-of-paragraph (make-marker)))
       (save-excursion
         (forward-paragraph)
@@ -37,3 +36,19 @@
         (newline)
         (forward-sentence))
       (set-marker end-of-paragraph nil)))) 
+
+;; Comment a selected region
+(defun comment-region-lines ()
+  (interactive)
+  (let ((start (line-beginning-position))
+        (end (line-end-position)))
+    (when (or (not transient-mark-mode) (region-active-p))
+      (setq start (save-excursion
+                    (goto-char (region-beginning))
+                    (beginning-of-line)
+                    (point))
+            end (save-excursion
+                  (goto-char (region-end))
+                  (end-of-line)
+                  (point))))
+    (comment-or-uncomment-region start end)))
