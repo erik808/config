@@ -1,4 +1,5 @@
-(add-to-list 'load-path "~/.emacs.d")
+(add-to-list 'load-path "~/.emacs.d/elpa")
+(load (expand-file-name ".emacs.shared" (file-name-directory load-file-name)))
 
 ;; Package manager
 (require 'package)
@@ -87,16 +88,6 @@
 ;; Newline indent
 (define-key global-map (kbd "RET") 'newline-and-indent)
 
-;; Auto complete
-(require 'auto-complete)
-(global-auto-complete-mode t)
-(require 'auto-complete-config)
-(ac-config-default)
-(setq ac-source-yasnippet nil)
-(setq ac-auto-show-menu nil)
-(define-key ac-completing-map [down] nil)
-(define-key ac-completing-map [up] nil)
-
 ;; Scrolling
 (setq-default scroll-preserve-screen-position t)
 (setq-default mouse-wheel-progressive-speed nil)
@@ -108,23 +99,30 @@
   (save-some-buffers)
   (kill-emacs))
 
-;; Commenting
-(defun comment-region-lines ()
-  (interactive)
-  (let ((start (line-beginning-position))
-        (end (line-end-position)))
-    (when (or (not transient-mark-mode) (region-active-p))
-      (setq start (save-excursion
-                    (goto-char (region-beginning))
-                    (beginning-of-line)
-                    (point))
-            end (save-excursion
-                  (goto-char (region-end))
-                  (end-of-line)
-                  (point))))
-    (comment-or-uncomment-region start end)))
+;; LaTeX sentence filling
+(setq-default sentence-end-double-space nil)
+(global-set-key (kbd "M-Q") 'fill-sentence)
 
-;; Suggested binding
+(defun fd-switch-dictionary()
+  (interactive)
+  (let* ((dic ispell-current-dictionary)
+         (change (if (string= dic "nederlands") "english" "nederlands")))
+    (ispell-change-dictionary change)
+    (message "Dictionary switched from %s to %s" dic change)
+    ))
+
+(global-set-key (kbd "<f8>") 'fd-switch-dictionary)
+
+(defun switch-style()
+  (interactive)
+  (let* ((st c-indentation-style)
+         (change (if (string= st "jonas-style") "sven-style" "jonas-style")))
+    (c-set-style change)
+    (message "Style switched from %s to %s" st change)
+    ))
+(global-set-key (kbd "<f7>") 'switch-style)
+
+;; Commenting
 (global-set-key (kbd "C-c c") 'comment-region-lines)
 
 ;; Indenting
