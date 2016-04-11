@@ -117,5 +117,5 @@ build directory."
 (defun cmake-project-flymake-init ()
   (cmake-project-current-build-command))
 
-(setq flymake-log-level 3)
+(setq flymake-log-level -1)
 ;;==================================================================
