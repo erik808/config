@@ -13,9 +13,6 @@
 (add-to-list 'custom-theme-load-path "~/.emacs.d/emacs-color-theme-solarized-master/")
 (add-to-list 'custom-theme-load-path "~/config")
 
-(setenv "CTEST_OUTPUT_ON_FAILURE" "1")
-(setenv "GTEST_COLOR" "1")
-
 ;;======================== Package manager =====================================
 (require 'package)
 (add-to-list 'package-archives
@@ -199,40 +196,4 @@
 	  number-of-diary-entries 7)
 (add-hook 'diary-display-hook 'fancy-diary-display)
 (add-hook 'today-visible-calendar-hook 'calendar-mark-today)
-;;==================================================================
-
-;;================== CMAKE =========================================
-(require 'cmake-project)
-(defun maybe-cmake-project-hook ()
-  (if (file-exists-p "CMakeLists.txt") (cmake-project-mode)))
-(add-hook 'c-mode-hook 'maybe-cmake-project-hook)
-(add-hook 'c++-mode-hook 'maybe-cmake-project-hook)
-
-(defun cmake-project-current-build-command ()
-  "Command line to compile current project as configured in the
-build directory."
-  (concat "cmake --build "
-          (shell-quote-argument (expand-file-name
-                                 cmake-project-build-directory)) " --target" " check" ))
-;;==================================================================
-
-;;================== FLYMAKE =======================================
-(require 'flymake)
-(require 'flymake-cursor)
-
-(setq flymake-gui-warnings-enabled t)
-
-(defun turn-on-flymake-mode()
-  (if (and (boundp 'flymake-mode) flymake-mode)
-	  ()
-	(flymake-mode t)))
-
-(add-hook 'c-mode-common-hook (lambda () (turn-on-flymake-mode)))
-(add-hook 'c++-mode-hook (lambda () (turn-on-flymake-mode)))
-
-(defun cmake-project-flymake-init ()
-  (list (executable-find "cmake")
-        (list "--build" (expand-file-name cmake-project-build-directory) "--target" "check")))
-
-(setq flymake-log-level -1)
 ;;==================================================================

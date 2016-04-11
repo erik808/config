@@ -29,13 +29,13 @@
         (backward-sentence)
         (forward-sentence)
         (set-marker end-of-paragraph (point)))
-      (forward-sentence) 
+      (forward-sentence)
       (while (< (point) end-of-paragraph)
         (just-one-space)
         (delete-backward-char 1)
         (newline)
         (forward-sentence))
-      (set-marker end-of-paragraph nil)))) 
+      (set-marker end-of-paragraph nil))))
 
 ;; Comment a selected region
 (defun comment-region-lines ()
@@ -59,7 +59,63 @@
   "Refreshes all open buffers from their respective files."
   (interactive)
   (dolist (buf (buffer-list))
-	(with-current-buffer buf
-	  (when (and (buffer-file-name) (file-exists-p (buffer-file-name)) (not (buffer-modified-p)))
-		(revert-buffer t t t) )))
+    (with-current-buffer buf
+      (when (and (buffer-file-name) (file-exists-p (buffer-file-name))
+                 (not (buffer-modified-p)))
+        (revert-buffer t t t) )))
   (message "Refreshed open files.") )
+;;==================================================================
+
+;;================== GTEST =========================================
+(setenv "CTEST_OUTPUT_ON_FAILURE" "1")
+(setenv "GTEST_COLOR" "1")
+;;==================================================================
+
+;;================== CMAKE =========================================
+(require 'cmake-project)
+(defun maybe-cmake-project-hook ()
+  (if (file-exists-p "CMakeLists.txt") (cmake-project-mode)))
+(add-hook 'c-mode-hook 'maybe-cmake-project-hook)
+(add-hook 'c++-mode-hook 'maybe-cmake-project-hook)
+
+(defun cmake-project-current-build-command ()
+  "Command line to compile current project as configured in the
+build directory."
+  (let ((check-available
+         (let ((cmd
+                (concat
+                 (executable-find "cmake")
+                 " --build "
+                 (expand-file-name cmake-project-build-directory)
+                 " --target help | grep check")))
+           (flymake-log 3 cmd)
+           (shell-command-to-string cmd))))
+    (flymake-log 3 check-available)
+    (if (equal check-available "")
+      (list (executable-find "cmake")
+            (list "--build" (expand-file-name cmake-project-build-directory)))
+      (list (executable-find "cmake")
+            (list "--build" (expand-file-name cmake-project-build-directory)
+                  "--target" "check"))
+      )))
+;;==================================================================
+
+;;================== FLYMAKE =======================================
+(require 'flymake)
+(require 'flymake-cursor)
+
+(setq flymake-gui-warnings-enabled t)
+
+(defun turn-on-flymake-mode ()
+  (if (and (boundp 'flymake-mode) flymake-mode)
+      ()
+    (flymake-mode t)))
+
+(add-hook 'c-mode-common-hook (lambda () (turn-on-flymake-mode)))
+(add-hook 'c++-mode-hook (lambda () (turn-on-flymake-mode)))
+
+(defun cmake-project-flymake-init ()
+  (cmake-project-current-build-command))
+
+(setq flymake-log-level 3)
+;;==================================================================
