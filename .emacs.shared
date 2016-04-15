@@ -81,23 +81,10 @@
 (defun cmake-project-current-build-command ()
   "Command line to compile current project as configured in the
 build directory."
-  (let ((check-available
-         (let ((cmd
-                (concat
-                 (executable-find "cmake")
-                 " --build "
-                 (expand-file-name cmake-project-build-directory)
-                 " --target help | grep check")))
-           (flymake-log 3 cmd)
-           (shell-command-to-string cmd))))
-    (flymake-log 3 check-available)
-    (if (equal check-available "")
-      (list (executable-find "cmake")
-            (list "--build" (expand-file-name cmake-project-build-directory)))
-      (list (executable-find "cmake")
-            (list "--build" (expand-file-name cmake-project-build-directory)
-                  "--target" "check"))
-      )))
+  (concat "cmake --build "
+          (shell-quote-argument (expand-file-name
+                                 cmake-project-build-directory)) " --target" " check" ))
+
 ;;==================================================================
 
 ;;================== FLYMAKE =======================================
