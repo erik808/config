@@ -102,7 +102,8 @@ build directory."
 (add-hook 'c++-mode-hook (lambda () (turn-on-flymake-mode)))
 
 (defun cmake-project-flymake-init ()
-  (cmake-project-current-build-command))
+  (list (executable-find "cmake")
+        (list "--build" (expand-file-name cmake-project-build-directory) "--target" "check")))
 
 (setq flymake-log-level -1)
 ;;==================================================================
