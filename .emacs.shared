@@ -77,6 +77,8 @@
   (if (file-exists-p "CMakeLists.txt") (cmake-project-mode)))
 (add-hook 'c-mode-hook 'maybe-cmake-project-hook)
 (add-hook 'c++-mode-hook 'maybe-cmake-project-hook)
+(add-hook 'fortran-mode-hook 'maybe-cmake-project-hook)
+(add-hook 'f90-mode-hook 'maybe-cmake-project-hook)
 
 (defun cmake-project-current-build-command ()
   "Command line to compile current project as configured in the
@@ -100,6 +102,8 @@ build directory."
 
 (add-hook 'c-mode-common-hook (lambda () (turn-on-flymake-mode)))
 (add-hook 'c++-mode-hook (lambda () (turn-on-flymake-mode)))
+(add-hook 'fortran-mode-hook (lambda () (turn-on-flymake-mode)))
+(add-hook 'f90-mode-hook (lambda () (turn-on-flymake-mode)))
 
 (defun cmake-project-flymake-init ()
   (list (executable-find "cmake")
