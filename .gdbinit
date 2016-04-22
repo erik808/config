@@ -46,3 +46,37 @@ document prntComplex2D
 Print elements of a Complex2D object
 Usage: prntComplex2D <array> <rows> <cols>
 end
+
+define prntvcpp
+  if $argc != 2
+  	help prntvcpp
+  else
+	set $j = 1
+	while ($j <= $arg1)
+	  p $arg0[$j - 1]._M_value
+	  set $j = $j + 1
+	end
+  end							
+end
+
+document prntvcpp
+Print elements of a vector
+Usage: prntvcpp <vec> <rows>
+end
+
+define prntvfort
+  if $argc .ne. 2
+  	help prntvfort
+  else
+	set $j = 1
+	while ($j .le. $arg1)
+	  p $arg0($j)
+	  set $j = $j + 1
+	end
+  end							
+end
+
+document prntvfort
+Print elements of a vector
+Usage: prntvfort <vec> <rows>
+end
