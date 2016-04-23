@@ -80,13 +80,34 @@
 (add-hook 'fortran-mode-hook 'maybe-cmake-project-hook)
 (add-hook 'f90-mode-hook 'maybe-cmake-project-hook)
 
-(defun cmake-project-current-build-command ()
+(defun cmake-project-current-build-command-list ()
   "Command line to compile current project as configured in the
 build directory."
-  (concat "cmake --build "
-          (shell-quote-argument (expand-file-name
-                                 cmake-project-build-directory)) " --target" " check" ))
+  (let ((check-available
+         (let ((cmd
+                (concat
+                 (executable-find "cmake")
+                 " --build "
+                 (expand-file-name cmake-project-build-directory)
+                 " --target help | grep check")))
+           (flymake-log 3 cmd)
+           (shell-command-to-string cmd))))
+    (flymake-log 3 check-available)
+    (if (equal check-available "")
+      (list (executable-find "cmake")
+            (list "--build" (expand-file-name cmake-project-build-directory)))
+      (list (executable-find "cmake")
+            (list "--build" (expand-file-name cmake-project-build-directory)
+                  "--target" "check"))
+      )))
 
+(defun flatten (l)
+  (cond ((null l) nil)
+        ((atom l) (list l))
+        (t (loop for a in l appending (flatten a)))))
+
+(defun cmake-project-current-build-command ()
+  (mapconcat 'identity (flatten (cmake-project-current-build-command-list)) " "))
 ;;==================================================================
 
 ;;================== FLYMAKE =======================================
@@ -106,8 +127,7 @@ build directory."
 (add-hook 'f90-mode-hook (lambda () (turn-on-flymake-mode)))
 
 (defun cmake-project-flymake-init ()
-  (list (executable-find "cmake")
-        (list "--build" (expand-file-name cmake-project-build-directory) "--target" "check")))
+  (cmake-project-current-build-command-list))
 
 (setq flymake-log-level -1)
 ;;==================================================================
