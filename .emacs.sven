@@ -1,5 +1,4 @@
 (add-to-list 'load-path "~/.emacs.d/elpa")
-(load (expand-file-name ".emacs.shared" (file-name-directory load-file-name)))
 
 ;; Package manager
 (require 'package)
@@ -29,6 +28,15 @@
       (package-install package)))
 
   (eval-emacs))
+
+;; Daemon shutdown
+(defun server-shutdown ()
+  "Save buffers, Quit, and Shutdown (kill) server"
+  (interactive)
+  (save-some-buffers)
+  (kill-emacs))
+
+(load (expand-file-name ".emacs.shared" (file-name-directory load-file-name)))
 
 ;;Helm
 (require 'helm)
@@ -92,13 +100,6 @@
 (setq-default scroll-preserve-screen-position t)
 (setq-default mouse-wheel-progressive-speed nil)
 
-;; Daemon shutdown
-(defun server-shutdown ()
-  "Save buffers, Quit, and Shutdown (kill) server"
-  (interactive)
-  (save-some-buffers)
-  (kill-emacs))
-
 ;; LaTeX sentence filling
 (setq-default sentence-end-double-space nil)
 (global-set-key (kbd "M-Q") 'fill-sentence)
@@ -148,6 +149,19 @@
 
 (c-add-style "sven2-style" sven2-style)
 
+(defun set-cmake-project-directory()
+  (interactive)
+  (let ((project-dir
+         (file-name-nondirectory(directory-file-name (cmake-project-find-root-directory)))))
+    (let ((new-dir
+           (concat (file-name-as-directory "/mnt/D") "build_" project-dir "_emacs")))
+      (cmake-project--changed-build-directory new-dir)
+      (turn-on-flymake-mode)
+      (cmake-project--changed-build-directory new-dir)
+      )
+    )
+  )
+
 ;; Tabs are spaces
 (setq-default indent-tabs-mode nil)
 
@@ -159,6 +173,8 @@
  '(global-whitespace-mode t)
  '(inhibit-startup-screen t)
  '(show-paren-mode t)
+ '(matlab-fill-code nil)
+ '(matlab-functions-have-end t)
  '(size-indication-mode t)
  '(tool-bar-mode nil)
  '(uniquify-buffer-name-style (quote forward) nil (uniquify))
