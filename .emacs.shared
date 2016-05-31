@@ -80,12 +80,6 @@
 (add-hook 'fortran-mode-hook 'maybe-cmake-project-hook)
 (add-hook 'f90-mode-hook 'maybe-cmake-project-hook)
 
-;; ----- hacks -----
-(defcustom cmake-project-default-build-dir-name "build/"
-  "Default name for CMake build tree directories."
-  :type 'directory
-  :group 'data)
-
 (defun cmake-project-current-build-command-list ()
   "Command line to compile current project as configured in the
 build directory."
