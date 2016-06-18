@@ -198,3 +198,25 @@
 (add-hook 'diary-display-hook 'fancy-diary-display)
 (add-hook 'today-visible-calendar-hook 'calendar-mark-today)
 ;;==================================================================
+
+;;================== FLYMAKE =======================================
+(require 'flymake)
+(require 'flymake-cursor)
+
+(setq flymake-gui-warnings-enabled t)
+
+(defun turn-on-flymake-mode ()
+  (if (and (boundp 'flymake-mode) flymake-mode)
+      ()
+    (flymake-mode t)))
+
+(add-hook 'c-mode-common-hook (lambda () (turn-on-flymake-mode)))
+(add-hook 'c++-mode-hook (lambda () (turn-on-flymake-mode)))
+(add-hook 'fortran-mode-hook (lambda () (turn-on-flymake-mode)))
+(add-hook 'f90-mode-hook (lambda () (turn-on-flymake-mode)))
+
+(defun cmake-project-flymake-init ()
+  (cmake-project-current-build-command-list))
+
+(setq flymake-log-level -1)
+;;==================================================================
