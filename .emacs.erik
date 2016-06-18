@@ -150,10 +150,16 @@
 (global-set-key (kbd "s-a") 'other-window)
 ;; ==========================================================
 
+;; ======= LaTeX sentence filling ===========================
+(setq-default sentence-end-double-space nil)
+(global-set-key (kbd "M-Q") 'fill-sentence)
+;;===========================================================
+
 ;; ============= AucTeX stuff ===============================
 (setq-default TeX-master t)
 (setq-default TeX-command-default "LaTeX")
 (setq-default TeX-PDF-mode t)
+(add-hook 'LaTeX-mode-hook 'visual-line-mode)
 ;; ==========================================================
 
 ;; ================ auto complete !disabled! ================
@@ -219,4 +225,11 @@
   (cmake-project-current-build-command-list))
 
 (setq flymake-log-level -1)
+;;==================================================================			
+
+;;==================== CMAKE =======================================
+(defcustom cmake-project-default-build-dir-name "build/"
+  "Default name for CMake build tree directories."
+  :type 'directory
+  :group 'data)
 ;;==================================================================
