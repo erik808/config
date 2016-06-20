@@ -162,16 +162,16 @@
 (add-hook 'LaTeX-mode-hook 'visual-line-mode)
 ;; ==========================================================
 
-;; ================ auto complete !disabled! ================
-;;(require 'auto-complete)
-;;(global-auto-complete-mode t)
+;; ================ auto complete ===========================
+(require 'auto-complete)
+(global-auto-complete-mode t)
 ;;(require 'auto-complete-config)
 ;;(ac-config-default)
 ;;(setq ac-source-yasnippet nil)
 ;; ==========================================================
 
 ;; ================ complete any mode =======================
-(add-hook 'after-init-hook 'global-company-mode)
+;; (add-hook 'after-init-hook 'global-company-mode)
 ;; ================ complete any mode =======================
 
 ;;========= ggtags == ===========================================
@@ -216,10 +216,10 @@
       ()
     (flymake-mode t)))
 
-(add-hook 'c-mode-common-hook (lambda () (turn-on-flymake-mode)))
-(add-hook 'c++-mode-hook (lambda () (turn-on-flymake-mode)))
-(add-hook 'fortran-mode-hook (lambda () (turn-on-flymake-mode)))
-(add-hook 'f90-mode-hook (lambda () (turn-on-flymake-mode)))
+;; (add-hook 'c-mode-common-hook (lambda () (turn-on-flymake-mode)))
+;; (add-hook 'c++-mode-hook (lambda () (turn-on-flymake-mode)))
+;; (add-hook 'fortran-mode-hook (lambda () (turn-on-flymake-mode)))
+;; (add-hook 'f90-mode-hook (lambda () (turn-on-flymake-mode)))
 
 (defun cmake-project-flymake-init ()
   (cmake-project-current-build-command-list))
