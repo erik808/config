@@ -54,6 +54,7 @@
 (eval-after-load "preview"
   '(add-to-list 'preview-default-preamble "\\PreviewEnvironment{tikzpicture}" t))
 (setq org-latex-create-formula-image-program 'imagemagick)
+(setq initial-major-mode 'org-mode)
 ;;=============================================================
 
 (define-key global-map (kbd "RET") 'newline-and-indent)
@@ -232,4 +233,9 @@
   "Default name for CMake build tree directories."
   :type 'directory
   :group 'data)
+;;==================================================================
+
+;;==================== Ergo movement ===============================
+(require 'ergo-movement-mode)
+(ergo-movement-mode 1)
 ;;==================================================================
