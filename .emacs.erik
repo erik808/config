@@ -68,7 +68,7 @@
 (setq linum-format "%d ")
 
 ;;=============== Matlab/Octave mode ======================
-(autoload 'octave-mode "octave-mode" nil t)
+;; (autoload 'octave-mode "octave-mode" nil t)
 (setq auto-mode-alist
       (cons '("\\.m$" . octave-mode) auto-mode-alist))
 ;; (add-hook 'octave-mode-hook
@@ -166,6 +166,11 @@
 ;; ================ auto complete ===========================
 (require 'auto-complete)
 (global-auto-complete-mode t)
+(add-to-list 'ac-modes 'octave-mode)
+(add-to-list 'ac-modes 'c++-mode)
+(add-to-list 'ac-modes 'octave-mode)
+(add-to-list 'ac-modes 'LaTeX-mode)
+(add-to-list 'ac-modes 'latex-mode)
 ;;(require 'auto-complete-config)
 ;;(ac-config-default)
 ;;(setq ac-source-yasnippet nil)
