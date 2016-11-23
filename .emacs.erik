@@ -68,9 +68,9 @@
 (setq linum-format "%d ")
 
 ;;=============== Matlab/Octave mode ======================
-;; (autoload 'octave-mode "octave-mod" nil t)
-;; (setq auto-mode-alist
-;;       (cons '("\\.m$" . octave-mode) auto-mode-alist))
+(autoload 'octave-mode "octave-mode" nil t)
+(setq auto-mode-alist
+      (cons '("\\.m$" . octave-mode) auto-mode-alist))
 ;; (add-hook 'octave-mode-hook
 ;;           (lambda ()
 ;;             (abbrev-mode 1)
