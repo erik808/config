@@ -244,3 +244,51 @@
 ;; (require 'ergo-movement-mode)
 ;; (ergo-movement-mode 1)
 ;;==================================================================
+
+;;==================== RSYNC in Dired ==============================
+
+(defun remove-tramp-prefix (list)
+  (let (value)
+	(dolist (element list value)
+	  (setq value (cons (replace-regexp-in-string "/ssh:" "" element) value))
+	  )))
+
+(defun ora-dired-rsync (dest)
+  (interactive
+   (list
+	(expand-file-name
+	 (read-file-name
+	  "Rsync to:"
+	  (dired-dwim-target-directory)
+	  ))))
+  ;; store all selected files into "files" list
+  (let ((files (remove-tramp-prefix
+				(dired-get-marked-files
+				 nil current-prefix-arg)))
+		
+        ;; the rsync command
+        (rsync-command
+         "rsync -rvt --progress --protect-args "))
+    ;; add all selected file names as arguments
+    ;; to the rsync command
+    (dolist (file files)
+      (setq rsync-command
+            (concat rsync-command
+					(shell-quote-argument file)
+					" ")))
+
+    ;; append the destination
+    (setq rsync-command
+          (concat rsync-command
+                  (shell-quote-argument
+				   (replace-regexp-in-string "/ssh:" "" dest))))
+
+    ;; run the async shell command from another window and buffer
+	(other-window 1)
+	(find-file dest)
+	(switch-to-buffer "*rsync*")
+	(async-shell-command rsync-command "*rsync*")
+	))
+
+(define-key dired-mode-map "Y" 'ora-dired-rsync)
+;;===================================================================
