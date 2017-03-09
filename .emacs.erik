@@ -9,6 +9,7 @@
 ;;===========================================================================
 
 (add-to-list 'load-path "~/.emacs.d/lisp")
+(add-to-list 'load-path "~/.emacs.d/lisp/matlab-emacs")	
 (add-to-list 'load-path "~/.emacs.d/emacs-color-theme-solarized-master/")
 (add-to-list 'custom-theme-load-path "~/.emacs.d/emacs-color-theme-solarized-master/")
 (add-to-list 'custom-theme-load-path "~/.emacs.d/lisp/")	
@@ -34,6 +35,7 @@
 (global-linum-mode -1)
 (column-number-mode 1)
 (global-auto-revert-mode t)
+(global-whitespace-mode t)
 ;;===========================================================================
 
 ;;=============== Smooth scrolling =====================================
@@ -63,21 +65,19 @@
 (setq-default c-default-style "linux"
 			  tab-width 4
 			  c-basic-offset 4
-			  inden-tabs-mode t)
+			  indent-tabs-mode nil)
 
 (setq inhibit-startup-screen t)
 (setq linum-format "%d ")
 
 ;;=============== Matlab/Octave mode ======================
-;; (autoload 'octave-mode "octave-mode" nil t)
-(setq auto-mode-alist
-      (cons '("\\.m$" . octave-mode) auto-mode-alist))
-;; (add-hook 'octave-mode-hook
-;;           (lambda ()
-;;             (abbrev-mode 1)
-;;             (auto-fill-mode 1)
-;;             (if (eq window-system 'x)
-;;                 (font-lock-mode 1))))
+(load-library "matlab-load")
+(autoload 'matlab-mode "matlab" "Matlab Editing Mode" t)
+(add-to-list
+ 'auto-mode-alist
+ '("\\.m$" . matlab-mode))
+(setq matlab-indent-function t)
+(setq matlab-shell-command "matlab")
 ;;=========================================================
 
 ;;========== printing =====================================
@@ -246,6 +246,11 @@
 ;; (ergo-movement-mode 1)
 ;;==================================================================
 
+;;==================== Dired customizations = ======================
+(setq dired-listing-switches "-alh")
+(add-hook 'dired-mode-hook 'toggle-truncate-lines)
+;;====================================+=============================
+
 ;;==================== RSYNC in Dired ==============================
 (require 'dired)
 
@@ -294,3 +299,22 @@
 
 (define-key dired-mode-map "Y" 'ora-dired-rsync)
 ;;===================================================================
+
+;; ====================== emacs-w3m + dired ====================================
+ (require 'w3m-load)
+ (setq browse-url-browser-function 'w3m-browse-url)
+ (autoload 'w3m-browse-url "w3m" "Ask a WWW browser to show a URL." t)
+ (global-set-key "\C-xm" 'browse-url-at-point)
+
+ (add-hook 'dired-mode-hook	
+ 	   (lambda ()
+	       (define-key dired-mode-map "\C-xm" 'dired-w3m-find-file)))
+
+ (defun dired-w3m-find-file ()
+   (interactive)
+   (require 'w3m)
+   (let ((file (dired-get-filename)))
+     (if (y-or-n-p (format "Open 'w3m' %s " (file-name-nondirectory file)))
+	 (w3m-find-file file))))
+		   
+;; =============================================================================
