@@ -9,49 +9,49 @@
   (forward-paragraph 1)
   (forward-paragraph -1)
   (while (looking-at paragraph-start)
-	(forward-line 1))
+    (forward-line 1))
   (let ((beg (point)))
-	(forward-paragraph 1)
-	(backward-char 1)
-	(while (> (point) beg)
-	  (join-line)
-	  (beginning-of-line))))
+    (forward-paragraph 1)
+    (backward-char 1)
+    (while (> (point) beg)
+      (join-line)
+      (beginning-of-line))))
 
 (defun fill-sentence()
   (interactive)
   (save-excursion
-	(fill-paragraph)
-	(unfill-paragraph)
+    (fill-paragraph)
+    (unfill-paragraph)
 
-	(let ((end-of-paragraph (make-marker)))
-	  (save-excursion
-		(forward-paragraph)
-		(backward-sentence)
-		(forward-sentence)
-		(set-marker end-of-paragraph (point)))
-	  (forward-sentence)
-	  (while (< (point) end-of-paragraph)
-		(just-one-space)
-		(delete-backward-char 1)
-		(newline)
-		(forward-sentence))
-	  (set-marker end-of-paragraph nil))))
+    (let ((end-of-paragraph (make-marker)))
+      (save-excursion
+        (forward-paragraph)
+        (backward-sentence)
+        (forward-sentence)
+        (set-marker end-of-paragraph (point)))
+      (forward-sentence)
+      (while (< (point) end-of-paragraph)
+        (just-one-space)
+        (delete-backward-char 1)
+        (newline)
+        (forward-sentence))
+      (set-marker end-of-paragraph nil))))
 
 ;; Comment a selected region
 (defun comment-region-lines ()
   (interactive)
   (let ((start (line-beginning-position))
-		(end (line-end-position)))
-	(when (or (not transient-mark-mode) (region-active-p))
-	  (setq start (save-excursion
-					(goto-char (region-beginning))
-					(beginning-of-line)
-					(point))
-			end (save-excursion
-				  (goto-char (region-end))
-				  (end-of-line)
-				  (point))))
-	(comment-or-uncomment-region start end)))
+        (end (line-end-position)))
+    (when (or (not transient-mark-mode) (region-active-p))
+      (setq start (save-excursion
+                    (goto-char (region-beginning))
+                    (beginning-of-line)
+                    (point))
+            end (save-excursion
+                  (goto-char (region-end))
+                  (end-of-line)
+                  (point))))
+    (comment-or-uncomment-region start end)))
 
 
 ;; Function to revert all buffers simultaneously -EmacsWiki
@@ -59,10 +59,10 @@
   "Refreshes all open buffers from their respective files."
   (interactive)
   (dolist (buf (buffer-list))
-	(with-current-buffer buf
-	  (when (and (buffer-file-name) (file-exists-p (buffer-file-name))
-				 (not (buffer-modified-p)))
-		(revert-buffer t t t) )))
+    (with-current-buffer buf
+      (when (and (buffer-file-name) (file-exists-p (buffer-file-name))
+                 (not (buffer-modified-p)))
+        (revert-buffer t t t) )))
   (message "Refreshed open files.") )
 ;;==================================================================
 
@@ -84,27 +84,27 @@
   "Command line to compile current project as configured in the
 build directory."
   (let ((check-available
-		 (let ((cmd
-				(concat
-				 (executable-find "cmake")
-				 " --build "
-				 (expand-file-name cmake-project-build-directory)
-				 " --target help | grep check")))
-		   (flymake-log 3 cmd)
-		   (shell-command-to-string cmd))))
-	(flymake-log 3 check-available)
-	(if (equal check-available "")
-		(list (executable-find "cmake")
-			  (list "--build" (expand-file-name cmake-project-build-directory)))
-	  (list (executable-find "cmake")
-			(list "--build" (expand-file-name cmake-project-build-directory)
-				  "--target" "check"))
-	  )))
+         (let ((cmd
+                (concat
+                 (executable-find "cmake")
+                 " --build "
+                 (expand-file-name cmake-project-build-directory)
+                 " --target help | grep check")))
+           (flymake-log 3 cmd)
+           (shell-command-to-string cmd))))
+    (flymake-log 3 check-available)
+    (if (equal check-available "")
+        (list (executable-find "cmake")
+              (list "--build" (expand-file-name cmake-project-build-directory)))
+      (list (executable-find "cmake")
+            (list "--build" (expand-file-name cmake-project-build-directory)
+                  "--target" "check"))
+      )))
 
 (defun flatten (l)
   (cond ((null l) nil)
-		((atom l) (list l))
-		(t (loop for a in l appending (flatten a)))))
+        ((atom l) (list l))
+        (t (loop for a in l appending (flatten a)))))
 
 (defun cmake-project-current-build-command ()
   (mapconcat 'identity (flatten (cmake-project-current-build-command-list)) " "))
