@@ -37,7 +37,6 @@
 ;;===========================================================================
 
 ;;================= Whitespace-mode =========================================
-(global-whitespace-mode nil) ;; disabled
 (setq whitespace-line-column 1200)
 (setq whitespace-style (quote (face tabs trailing lines space-before-tab indentation empty space-after-tab tab-mark)))
 ;;===========================================================================
