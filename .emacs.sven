@@ -17,7 +17,7 @@
 (defun install-missing ()
   (interactive)
   ;; list the packages you want
-  (setq package-list '(ample-theme helm elpy multiple-cursors auto-complete))
+  (setq package-list '(ample-theme helm elpy multiple-cursors auto-complete cmake-project magit))
 
   ;; fetch the list of packages available
   (package-refresh-contents)
@@ -130,6 +130,9 @@
 ;; Commenting
 (global-set-key (kbd "C-c c") 'comment-region-lines)
 
+;; Magit
+(global-set-key (kbd "C-c g") 'magit)
+
 ;; Indenting
 (defconst jonas-style
   '("whitesmith"
@@ -137,7 +140,6 @@
     (c-basic-offset . 2)))
 
 (c-add-style "jonas-style" jonas-style)
-(setq c-default-style "jonas-style")
 
 (defconst sven-style
   '("K&R"
@@ -145,6 +147,7 @@
     (c-basic-offset . 4)))
 
 (c-add-style "sven-style" sven-style)
+(setq c-default-style "sven-style")
 
 (defconst sven2-style
   '("K&R"
