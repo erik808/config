@@ -8,6 +8,7 @@
 ;;===========================================================================
 
 (add-to-list 'load-path "~/.emacs.d/lisp")
+(add-to-list 'load-path "~/.emacs.d/scel/el")
 (add-to-list 'load-path "~/.emacs.d/lisp/matlab-emacs")
 (add-to-list 'load-path "~/.emacs.d/emacs-color-theme-solarized-master/")
 (add-to-list 'custom-theme-load-path "~/.emacs.d/emacs-color-theme-solarized-master/")
@@ -16,12 +17,21 @@
 
 ;;======================== Package manager =====================================
 (require 'package)
-(add-to-list 'package-archives
-             '("marmalade" .
-               "http://marmalade-repo.org/packages/"))
-(add-to-list 'package-archives
-             '("melpa-stable" . "http://stable.melpa.org/packages/") t)
+
+;;(add-to-list 'package-archives
+;;             '("marmalade" .
+;;               "http://marmalade-repo.org/packages/"))
+
+(let* ((no-ssl (and (memq system-type '(windows-nt ms-dos))
+                    (not (gnutls-available-p))))
+       (proto (if no-ssl "http" "https")))
+  ;;(add-to-list 'package-archives (cons "melpa" (concat proto "://melpa.org/packages/")) t)
+  (add-to-list 'package-archives (cons "melpa-stable" (concat proto "://stable.melpa.org/packages/")) t)
+  (when (< emacs-major-version 24)
+    ;; For important compatibility libraries like cl-lib
+    (add-to-list 'package-archives '("gnu" . (concat proto "://elpa.gnu.org/packages/")))))
 (package-initialize)
+
 ;;==============================================================================
 
 ;;=============== Some modes ===============================================
@@ -34,6 +44,10 @@
 (global-linum-mode -1)
 (column-number-mode 1)
 (global-auto-revert-mode t)
+;;===========================================================================
+
+;;================== Column fill width ======================================
+(setq fill-column 100)     
 ;;===========================================================================
 
 ;;================= Whitespace-mode =========================================
@@ -203,7 +217,7 @@
 
 ;;===================== transparancy ============================
 ;;(set-frame-parameter (selected-frame) 'alpha '(95 95))
-(add-to-list 'default-frame-alist '(alpha . (96 96)))
+(add-to-list 'default-frame-alist '(alpha . (100 100)))
 ;;===============================================================
 
 ;;=================== Diary ========================================
@@ -302,3 +316,51 @@
 
 (define-key dired-mode-map "Y" 'ora-dired-rsync)
 ;;===================================================================
+
+;;====== Unfill paragraph ===========================================
+;; Stefan Monnier <foo at acm.org>. It is the opposite of fill-paragraph    
+(defun unfill-paragraph (&optional region)
+  "Takes a multi-line paragraph and makes it into a single line of text."
+  (interactive (progn (barf-if-buffer-read-only) '(t)))
+  (let ((fill-column (point-max))
+        ;; This would override `fill-column' if it's an integer.
+        (emacs-lisp-docstring-fill-column t))
+    (fill-paragraph nil region)))
+
+;; Handy key definition
+(define-key global-map "\M-Q" 'unfill-paragraph)
+;;===================================================================
+
+;; ========== Slime ==================
+(setq slime-contribs '(slime-fancy))
+;;====================================
+
+;; ========== ido hacksz ================
+;; (require 'flx-ido)
+;; (ido-mode 1)
+;; (ido-everywhere 1)
+;; (flx-ido-mode 1)
+;; ;; disable ido faces to see flx highlights.
+;; (setq ido-enable-flex-matching t)
+;; (setq ido-use-faces nil)
+;; 
+;; (require 'ido-vertical-mode)
+;; (ido-mode 1)
+;; (ido-vertical-mode 1)
+;; =====================================
+
+;; ======== sclang ==============
+(require 'sclang)
+(require 'w3m)
+;; ==============================
+
+;; ============ counsel etags ================
+;; Don't ask before re-reading changed TAGS files
+(require 'counsel-etags)
+(setq tags-revert-without-query t)
+;; ===========================================
+
+;; ============ function-args ==================
+;; (require 'function-args)
+;; (fa-config-default)
+;; =============================================
