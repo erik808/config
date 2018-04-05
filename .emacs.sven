@@ -17,7 +17,7 @@
 (defun install-missing ()
   (interactive)
   ;; list the packages you want
-  (setq package-list '(ample-theme helm elpy multiple-cursors auto-complete))
+  (setq package-list '(ample-theme helm elpy multiple-cursors auto-complete cmake-project magit))
 
   ;; fetch the list of packages available
   (package-refresh-contents)
@@ -36,7 +36,7 @@
   (save-some-buffers)
   (kill-emacs))
 
-(load (expand-file-name ".emacs.shared" (file-name-directory load-file-name)))
+(load-file (expand-file-name ".emacs.shared" (file-name-directory load-file-name)))
 
 ;;Helm
 (require 'helm)
@@ -69,6 +69,10 @@
 (global-unset-key [M-mouse-3])
 (global-unset-key [M-mouse-2])
 
+;; Disable insert key
+(global-unset-key [(insert)])
+(global-set-key [(control insert)] 'overwrite-mode)
+
 ;; Python mode
 (require 'elpy)
 (elpy-enable)
@@ -84,7 +88,7 @@
 ;; Bracket highlighting
 (show-paren-mode 1)
 
-;; Refresh
+;; Refresh and disable undo warning when refreshing
 (global-auto-revert-mode 1)
 
 ;; Recent file buffer
@@ -126,6 +130,9 @@
 ;; Commenting
 (global-set-key (kbd "C-c c") 'comment-region-lines)
 
+;; Magit
+(global-set-key (kbd "C-c g") 'magit)
+
 ;; Indenting
 (defconst jonas-style
   '("whitesmith"
@@ -133,7 +140,6 @@
     (c-basic-offset . 2)))
 
 (c-add-style "jonas-style" jonas-style)
-(setq c-default-style "jonas-style")
 
 (defconst sven-style
   '("K&R"
@@ -141,6 +147,7 @@
     (c-basic-offset . 4)))
 
 (c-add-style "sven-style" sven-style)
+(setq c-default-style "sven-style")
 
 (defconst sven2-style
   '("K&R"
@@ -165,11 +172,11 @@
 ;; Tabs are spaces
 (setq-default indent-tabs-mode nil)
 
+(global-set-key "\C-c/" 'rotate-word-at-point)
+
 (custom-set-variables
  '(ansi-color-names-vector ["#242424" "#e5786d" "#95e454" "#cae682" "#8ac6f2" "#333366" "#ccaa8f" "#f6f3e8"])
  '(column-number-mode t)
- '(custom-enabled-themes (quote (ample)))
- '(custom-safe-themes t)
  '(global-whitespace-mode t)
  '(inhibit-startup-screen t)
  '(show-paren-mode t)
@@ -177,8 +184,11 @@
  '(matlab-functions-have-end t)
  '(size-indication-mode t)
  '(tool-bar-mode nil)
+ '(warning-suppress-types (quote ((undo discard-info))))
  '(uniquify-buffer-name-style (quote forward) nil (uniquify))
- '(whitespace-line-column 8000))
+ '(whitespace-line-column 8000)
+ '(custom-enabled-themes (quote (ample)))
+ '(custom-safe-themes t))
 (custom-set-faces
  '(whitespace-empty ((t (:foreground "gray25"))))
  '(whitespace-hspace ((t (:foreground "gray25"))))
