@@ -17,7 +17,7 @@
 (defun install-missing ()
   (interactive)
   ;; list the packages you want
-  (setq package-list '(ample-theme helm elpy multiple-cursors auto-complete cmake-project magit))
+  (setq package-list '(ample-theme helm elpy multiple-cursors auto-complete cmake-project magit auctex))
 
   ;; fetch the list of packages available
   (package-refresh-contents)
@@ -61,6 +61,7 @@
 (eval-after-load "tex"
   '(add-to-list 'TeX-command-list
                 '("Rubber" "rubber -d %t" TeX-run-command nil t) t))
+(add-hook 'LaTeX-mode-hook #'turn-on-flyspell)
 
 ;; Disable secondary overlay crap
 (global-unset-key [M-mouse-1])
@@ -155,6 +156,8 @@
     (c-basic-offset . 2)))
 
 (c-add-style "sven2-style" sven2-style)
+
+(add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
 
 (defun set-cmake-project-directory()
   (interactive)
