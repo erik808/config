@@ -61,6 +61,8 @@
 (eval-after-load "tex"
   '(add-to-list 'TeX-command-list
                 '("Rubber" "rubber -d %t" TeX-run-command nil t) t))
+(eval-after-load "tex"
+  '(add-to-list 'TeX-command-list '("Make" "make" TeX-run-compile nil t)))
 (add-hook 'LaTeX-mode-hook 'turn-on-flyspell)
 (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
 
@@ -120,8 +122,24 @@
   (call-interactively 'my-bibtex-resolve-duplicate)
   )
 
+(require 'biblio-core)
+(require 'biblio-doi)
+(defun my-bibtex-add(doi)
+  (interactive "MDOI: ")
+  (setq target-buffer (current-buffer))
+  (biblio-doi-forward-bibtex
+   (biblio-cleanup-doi doi)
+   (lambda (result)
+     (biblio-doi--insert result target-buffer)
+     (with-current-buffer target-buffer
+       (call-interactively 'my-bibtex-update)))
+   )
+  )
+
 (defun my-bibtex-mode-config()
   (local-set-key (kbd "C-c d") 'my-bibtex-update)
+  (local-set-key (kbd "C-c a") 'my-bibtex-add)
+  (local-set-key (kbd "C-c s") 'bibtex-sort-buffer)
   )
 
 (add-hook 'bibtex-mode-hook 'my-bibtex-mode-config)
