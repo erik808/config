@@ -364,3 +364,22 @@
 ;; (require 'function-args)
 ;; (fa-config-default)
 ;; =============================================
+
+;; ============ Python notebooks ============
+(require 'ein)
+;; ==========================================
+
+;;============= HideShow  ====================
+(add-to-list 'load-path "~/.emacs.d/lisp/hideshow-org/")
+(require 'hideshow-org)
+(global-set-key "\C-ch" 'hs-org/minor-mode)
+
+(add-hook 'c-mode-common-hook   'hs-org/minor-mode)
+(add-hook 'c++mode-hook         'hs-org/minor-mode)
+(add-hook 'matlab-mode-hook     'hs-org/minor-mode)
+(add-hook 'emacs-lisp-mode-hook 'hs-org/minor-mode)
+(add-hook 'java-mode-hook       'hs-org/minor-mode)
+(add-hook 'lisp-mode-hook       'hs-org/minor-mode)
+(add-hook 'perl-mode-hook       'hs-org/minor-mode)
+(add-hook 'sh-mode-hook         'hs-org/minor-mode)
+;;============================================
