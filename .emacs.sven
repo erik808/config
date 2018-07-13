@@ -17,7 +17,7 @@
 (defun install-missing ()
   (interactive)
   ;; list the packages you want
-  (setq package-list '(ample-theme helm elpy multiple-cursors auto-complete cmake-project magit))
+  (setq package-list '(ample-theme helm elpy multiple-cursors auto-complete cmake-project magit auctex))
 
   ;; fetch the list of packages available
   (package-refresh-contents)
@@ -61,6 +61,97 @@
 (eval-after-load "tex"
   '(add-to-list 'TeX-command-list
                 '("Rubber" "rubber -d %t" TeX-run-command nil t) t))
+(eval-after-load "tex"
+  '(add-to-list 'TeX-command-list '("Make" "make" TeX-run-compile nil t)))
+(add-hook 'LaTeX-mode-hook 'turn-on-flyspell)
+(add-hook 'LaTeX-mode-hook 'turn-on-reftex)
+
+;; BibTeX
+(setq bibtex-autokey-year-length 2
+      bibtex-autokey-name-year-separator ":"
+      bibtex-autokey-year-title-separator ""
+      bibtex-autokey-titleword-separator ""
+      bibtex-autokey-titlewords 0
+      bibtex-autokey-titlewords-stretch 1
+      bibtex-autokey-titleword-length 0
+      bibtex-autokey-name-case-convert-function 'downcase)
+
+(require 'org-ref)
+(setq reftex-default-bibliography '("~/doc/sources.bib"))
+
+(defun my-bibtex-resolve-duplicate()
+  (interactive)
+  (let ((key (funcall org-ref-clean-bibtex-key-function
+                      (bibtex-generate-autokey))))
+    ;; first we delete the existing key
+    (bibtex-beginning-of-entry)
+    (re-search-forward bibtex-entry-maybe-empty-head)
+    (if (match-beginning bibtex-key-in-head)
+        (delete-region (match-beginning bibtex-key-in-head)
+                       (match-end bibtex-key-in-head)))
+    ;; check if the key is in the buffer
+    (let ((ret key))
+      (loop for c from ?b to ?z
+            while (save-excursion (bibtex-search-entry ret))
+            do (setq ret (format "%s%c" key c)))
+      (setq key ret))
+    (insert key)
+    (kill-new key)))
+
+(defun my-bibtex-update()
+  (interactive)
+  (condition-case err
+      (call-interactively 'org-ref-clean-bibtex-entry)
+    (error
+     (message "%s" (error-message-string err))))
+  (condition-case err
+      (call-interactively 'doi-utils-update-bibtex-entry-from-doi)
+    (error
+     (message "%s" (error-message-string err))))
+  (save-excursion
+    (condition-case err
+        (progn (forward-char)
+               (re-search-forward bibtex-entry-head)
+               (bibtex-beginning-of-entry)
+               (backward-char)
+               (delete-blank-lines))
+      (error
+       (progn (end-of-buffer)
+              (delete-blank-lines)))
+      ))
+  (call-interactively 'my-bibtex-resolve-duplicate)
+  )
+
+(require 'biblio-core)
+(require 'biblio-doi)
+(defun my-bibtex-add(doi)
+  (interactive "MDOI: ")
+  (setq target-buffer (current-buffer))
+  (biblio-doi-forward-bibtex
+   (biblio-cleanup-doi doi)
+   (lambda (result)
+     (biblio-doi--insert result target-buffer)
+     (with-current-buffer target-buffer
+       (call-interactively 'my-bibtex-update)))
+   )
+  )
+
+(defun my-bibtex-mode-config()
+  (local-set-key (kbd "C-c d") 'my-bibtex-update)
+  (local-set-key (kbd "C-c a") 'my-bibtex-add)
+  (local-set-key (kbd "C-c s") 'bibtex-sort-buffer)
+  )
+
+(add-hook 'bibtex-mode-hook 'my-bibtex-mode-config)
+
+;; see org-ref for use of these variables
+(setq org-ref-bibliography-notes "~/doc/notes.org"
+      org-ref-default-bibliography '("~/doc/sources.bib")
+      org-ref-pdf-directory "~/doc/bibtex-pdfs/")
+
+(setq bibtex-completion-bibliography "~/doc/sources.bib"
+      bibtex-completion-library-path "~/doc/bibtex-pdfs"
+      bibtex-completion-notes-path "~/doc/helm-bibtex-notes")
 
 ;; Disable secondary overlay crap
 (global-unset-key [M-mouse-1])
@@ -156,6 +247,8 @@
 
 (c-add-style "sven2-style" sven2-style)
 
+(add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
+
 (defun set-cmake-project-directory()
   (interactive)
   (let ((project-dir
@@ -175,20 +268,25 @@
 (global-set-key "\C-c/" 'rotate-word-at-point)
 
 (custom-set-variables
- '(ansi-color-names-vector ["#242424" "#e5786d" "#95e454" "#cae682" "#8ac6f2" "#333366" "#ccaa8f" "#f6f3e8"])
+ '(ansi-color-names-vector
+   ["#242424" "#e5786d" "#95e454" "#cae682" "#8ac6f2" "#333366" "#ccaa8f" "#f6f3e8"])
  '(column-number-mode t)
+ '(custom-enabled-themes (quote (ample)))
+ '(custom-safe-themes t)
  '(global-whitespace-mode t)
  '(inhibit-startup-screen t)
- '(show-paren-mode t)
  '(matlab-fill-code nil)
  '(matlab-functions-have-end t)
+ '(org-ref-clean-bibtex-key-function (lambda (key) key))
+ '(package-selected-packages
+   (quote
+    (org-ref ebib matlab-mode multiple-cursors magit helm elpy cmake-project auto-complete auctex ample-theme)))
+ '(show-paren-mode t)
  '(size-indication-mode t)
  '(tool-bar-mode nil)
- '(warning-suppress-types (quote ((undo discard-info))))
  '(uniquify-buffer-name-style (quote forward) nil (uniquify))
- '(whitespace-line-column 8000)
- '(custom-enabled-themes (quote (ample)))
- '(custom-safe-themes t))
+ '(warning-suppress-types (quote ((undo discard-info))))
+ '(whitespace-line-column 8000))
 (custom-set-faces
  '(whitespace-empty ((t (:foreground "gray25"))))
  '(whitespace-hspace ((t (:foreground "gray25"))))
