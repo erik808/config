@@ -17,7 +17,7 @@
 (defun install-missing ()
   (interactive)
   ;; list the packages you want
-  (setq package-list '(ample-theme helm elpy multiple-cursors auto-complete cmake-project magit auctex))
+  (setq package-list '(ample-theme helm elpy jedi multiple-cursors cmake-project magit auctex))
 
   ;; fetch the list of packages available
   (package-refresh-contents)
@@ -65,6 +65,7 @@
   '(add-to-list 'TeX-command-list '("Make" "make" TeX-run-compile nil t)))
 (add-hook 'LaTeX-mode-hook 'turn-on-flyspell)
 (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
+(add-hook 'LaTeX-mode-hook 'visual-line-mode)
 
 ;; BibTeX
 (setq bibtex-autokey-year-length 2
@@ -98,6 +99,23 @@
     (insert key)
     (kill-new key)))
 
+(require 'biblio-core)
+(require 'biblio-doi)
+(defun my-bibtex-add(doi)
+  (interactive "MDOI: ")
+  (setq target-buffer (current-buffer))
+    (biblio-doi-forward-bibtex
+   (biblio-cleanup-doi doi)
+   (lambda (result)
+     (message result (messages-buffer))
+     (with-current-buffer target-buffer
+       (insert result)
+       (backward-char)
+       (call-interactively 'my-bibtex-update)
+       ))
+   )
+  )
+
 (defun my-bibtex-update()
   (interactive)
   (condition-case err
@@ -110,11 +128,10 @@
      (message "%s" (error-message-string err))))
   (save-excursion
     (condition-case err
-        (progn (forward-char)
-               (re-search-forward bibtex-entry-head)
-               (bibtex-beginning-of-entry)
-               (backward-char)
-               (delete-blank-lines))
+        (progn 
+          (bibtex-end-of-entry)
+          (insert "\n\n")
+          (delete-blank-lines))
       (error
        (progn (end-of-buffer)
               (delete-blank-lines)))
@@ -122,24 +139,101 @@
   (call-interactively 'my-bibtex-resolve-duplicate)
   )
 
-(require 'biblio-core)
-(require 'biblio-doi)
-(defun my-bibtex-add(doi)
-  (interactive "MDOI: ")
-  (setq target-buffer (current-buffer))
-  (biblio-doi-forward-bibtex
-   (biblio-cleanup-doi doi)
-   (lambda (result)
-     (biblio-doi--insert result target-buffer)
-     (with-current-buffer target-buffer
-       (call-interactively 'my-bibtex-update)))
-   )
-  )
+(defun org-ref-title-case (&optional key start end)
+  "Convert a bibtex entry title and booktitle to title-case.
+Convert only if the entry type is a member of the list
+`org-ref-title-case-types'. The arguments KEY, START and END are
+optional, and are only there so you can use this function with
+`bibtex-map-entries' to change all the title entries in articles and
+books."
+  (interactive)
+  (dolist (field '("title" "booktitle"))
+    (save-restriction
+      (bibtex-narrow-to-entry)
+      (bibtex-beginning-of-entry)
+      ;; Skip if field is not found in entry
+      (when (bibtex-search-forward-field field)
+        (let* ((title (bibtex-autokey-get-field field))
+               (words (split-string title))
+               (start 0))
+          (when
+              (member (downcase
+                       (cdr (assoc "=type=" (bibtex-parse-entry))))
+                      org-ref-title-case-types)
+            (setq
+             words
+             (mapcar
+              (lambda (word-outer)
+                (mapconcat
+                 'identity
+                 (mapcar
+                  (lambda (word)
+                    (let ((case-fold-search nil))
+                      (cond
+                       ;; words containing more than one . are probably
+                       ;; abbreviations. We do not change those.
+                       ((with-temp-buffer
+                          (insert word)
+                          (goto-char (point-min))
+                          (> (count-matches "\\.") 1))
+                        (concat "{" word "}"))
+                       ;; match words containing {} or \ which are probably
+                       ;; LaTeX or protected words, ignore
+                       ((string-match-p "\\$\\|{\\|}\\|(\\|)\\|\\\\" word)
+                        word)
+                       ;; all caps words are probably abbreviations
+                       ((string-match-p "[0-9A-Z][A-Z]" word)
+                        (concat "{" word "}"))
+                       ;; these words should not be capitalized, unless they
+                       ;; are the first word
+                       ((-contains? org-ref-lower-case-words
+                                    (s-downcase word))
+                        (s-downcase word))
+                       ;; Words that are quoted
+                       ((s-starts-with? "\"" word)
+                        (concat "\"" (s-capitalize (substring word 1))))
+                       (t
+                        (s-capitalize word)))))
+                  (split-string
+                   (replace-regexp-in-string "-\\|–" " " word-outer)
+                   )) "-"))
+              words))
+
+            ;; Check if first word should be capitalized
+            (when (-contains? org-ref-lower-case-words (car words))
+              (setf (car words) (s-capitalize (car words))))
+
+            (setq title (mapconcat 'identity words " "))
+
+            ;; this is defined in doi-utils
+            (bibtex-set-field
+             field
+             title)
+            (bibtex-fill-entry)))))))
+
+
+(setq org-ref-nonascii-latex-replacements
+      (append '(("ü" . "{\\\\\"u}")
+                ("ž" . "{\\\\v{z}}")
+                ("ů" . "{\\\\r{u}}"))
+              org-ref-nonascii-latex-replacements))
+(delete '("<" . "$<$")
+        org-ref-nonascii-latex-replacements)
+
+(defun org-ref-title-case-article (&optional key start end)
+  "Convert a bibtex entry article or book title to title-case.
+The arguments KEY, START and END are optional, and are only there
+so you can use this function with `bibtex-map-entries' to change
+all the title entries in articles and books."
+  (interactive)
+  (let ((org-ref-title-case-types '("article" "book" "incollection" "misc")))
+(org-ref-title-case)))
 
 (defun my-bibtex-mode-config()
   (local-set-key (kbd "C-c d") 'my-bibtex-update)
   (local-set-key (kbd "C-c a") 'my-bibtex-add)
   (local-set-key (kbd "C-c s") 'bibtex-sort-buffer)
+  (local-set-key (kbd "C-c x") 'biblio-crossref-lookup)
   )
 
 (add-hook 'bibtex-mode-hook 'my-bibtex-mode-config)
@@ -152,6 +246,22 @@
 (setq bibtex-completion-bibliography "~/doc/sources.bib"
       bibtex-completion-library-path "~/doc/bibtex-pdfs"
       bibtex-completion-notes-path "~/doc/helm-bibtex-notes")
+
+(defun find-first-non-ascii-char ()
+  "Find the first non-ascii character from point onwards."
+  (interactive)
+  (let (point)
+    (save-excursion
+      (setq point
+            (catch 'non-ascii
+              (while (not (eobp))
+                (or (eq (char-charset (following-char))
+                        'ascii)
+                    (throw 'non-ascii (point)))
+                (forward-char 1)))))
+    (if point
+        (goto-char point)
+      (message "No non-ascii characters."))))
 
 ;; Disable secondary overlay crap
 (global-unset-key [M-mouse-1])
@@ -168,7 +278,7 @@
 (require 'elpy)
 (elpy-enable)
 
-;; Python aut-complete
+;; Python auto-complete
 (add-hook 'python-mode-hook 'jedi:setup)
 (setq jedi:complete-on-dot t)
 
@@ -271,6 +381,7 @@
  '(ansi-color-names-vector
    ["#242424" "#e5786d" "#95e454" "#cae682" "#8ac6f2" "#333366" "#ccaa8f" "#f6f3e8"])
  '(column-number-mode t)
+ '(company-idle-delay nil)
  '(custom-enabled-themes (quote (ample)))
  '(custom-safe-themes t)
  '(global-whitespace-mode t)
@@ -280,13 +391,14 @@
  '(org-ref-clean-bibtex-key-function (lambda (key) key))
  '(package-selected-packages
    (quote
-    (org-ref ebib matlab-mode multiple-cursors magit helm elpy cmake-project auto-complete auctex ample-theme)))
+    (org-ref ebib matlab-mode multiple-cursors magit helm elpy cmake-project auctex ample-theme)))
  '(show-paren-mode t)
  '(size-indication-mode t)
  '(tool-bar-mode nil)
  '(uniquify-buffer-name-style (quote forward) nil (uniquify))
  '(warning-suppress-types (quote ((undo discard-info))))
  '(whitespace-line-column 8000))
+
 (custom-set-faces
  '(whitespace-empty ((t (:foreground "gray25"))))
  '(whitespace-hspace ((t (:foreground "gray25"))))
