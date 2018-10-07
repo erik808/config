@@ -17,7 +17,7 @@
 (defun install-missing ()
   (interactive)
   ;; list the packages you want
-  (setq package-list '(ample-theme helm elpy jedi multiple-cursors cmake-project magit auctex))
+  (setq package-list '(ample-theme helm elpy jedi multiple-cursors cmake-project magit auctex org-ref))
 
   ;; fetch the list of packages available
   (package-refresh-contents)
