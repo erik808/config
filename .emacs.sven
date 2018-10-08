@@ -17,7 +17,7 @@
 (defun install-missing ()
   (interactive)
   ;; list the packages you want
-  (setq package-list '(ample-theme helm elpy jedi multiple-cursors cmake-project magit auctex org-ref))
+  (setq package-list '(ample-theme helm elpy jedi multiple-cursors cmake-project magit auctex org-ref company))
 
   ;; fetch the list of packages available
   (package-refresh-contents)
@@ -279,9 +279,62 @@ all the title entries in articles and books."
 (require 'elpy)
 (elpy-enable)
 
-;; Python auto-complete
-(add-hook 'python-mode-hook 'jedi:setup)
-(setq jedi:complete-on-dot t)
+;; Disable stupid instant auto-complete
+(defun elpy-module-company (command &rest _args)
+  "Module to support company-mode completions."
+  (pcase command
+    (`global-init
+     (require 'company)
+     (require 'company-capf)
+     (elpy-modules-remove-modeline-lighter 'company-mode)
+     (define-key company-active-map (kbd "C-d")
+       'company-show-doc-buffer)
+     (add-hook 'inferior-python-mode-hook
+               (lambda ()
+                 ;; Workaround for company bug
+                 ;; (https://github.com/company-mode/company-mode/issues/759)
+                 (setq-local company-transformers
+                             (remove 'company-sort-by-occurrence
+                                     company-transformers))
+                 ;; Be sure to trigger completion for one character variable
+                 ;; (i.e. `a.`)
+                 (setq-local company-minimum-prefix-length 2))))
+
+    (`buffer-init
+     ;; We want immediate completions from company.
+     ;; (set (make-local-variable 'company-idle-delay)
+     ;;      0.01)
+     ;; And annotations should be right-aligned.
+     (set (make-local-variable 'company-tooltip-align-annotations)
+          t)
+     ;; Also, dabbrev in comments and strings is nice.
+     (set (make-local-variable 'company-dabbrev-code-everywhere)
+          t)
+     ;; Add our own backend and remove a bunch of backends that
+     ;; interfere in Python mode.
+     (set (make-local-variable 'company-backends)
+          (cons 'elpy-company-backend
+                (delq 'company-semantic
+                      (delq 'company-ropemacs
+                            (delq 'company-capf
+                                  (mapcar #'identity company-backends))))))
+     (company-mode 1)
+     (when (> (buffer-size) elpy-rpc-ignored-buffer-size)
+       (message
+        (concat "Buffer %s larger than elpy-rpc-ignored-buffer-size (%d)."
+                " Elpy will turn off completion.")
+        (buffer-name) elpy-rpc-ignored-buffer-size)))
+    (`buffer-stop
+     (company-mode -1)
+     ;; (kill-local-variable 'company-idle-delay)
+     (kill-local-variable 'company-tooltip-align-annotations)
+     (kill-local-variable 'company-backends))
+    ))
+
+;; Auto-complete
+(require 'company)
+(global-set-key (kbd "<C-tab>") 'company-manual-begin)
+(add-hook 'after-init-hook 'global-company-mode)
 
 ;; Line numbers
 (global-linum-mode 1)
@@ -383,6 +436,7 @@ all the title entries in articles and books."
    ["#242424" "#e5786d" "#95e454" "#cae682" "#8ac6f2" "#333366" "#ccaa8f" "#f6f3e8"])
  '(column-number-mode t)
  '(company-idle-delay nil)
+ '(company-tooltip-idle-delay nil)
  '(custom-enabled-themes (quote (ample)))
  '(custom-safe-themes t)
  '(global-whitespace-mode t)
