@@ -386,7 +386,7 @@ all the title entries in articles and books."
 (global-set-key (kbd "C-c c") 'comment-region-lines)
 
 ;; Magit
-(global-set-key (kbd "C-c g") 'magit)
+(global-set-key (kbd "C-c g") 'magit-status)
 
 ;; Indenting
 (defconst jonas-style
