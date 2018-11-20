@@ -195,8 +195,8 @@ books."
                        (t
                         (s-capitalize word)))))
                   (split-string
-                   (replace-regexp-in-string "-\\|–" " " word-outer)
-                   )) "-"))
+                   (replace-regexp-in-string "-" "- " word-outer)
+                   )) ""))
               words))
 
             ;; Check if first word should be capitalized
@@ -211,15 +211,17 @@ books."
              title)
             (bibtex-fill-entry)))))))
 
-
+(delete '("<" . "$<$")
+        org-ref-nonascii-latex-replacements)
+(delete '("–" . "-")
+        org-ref-nonascii-latex-replacements)
 (setq org-ref-nonascii-latex-replacements
       (append '(("ü" . "{\\\\\"u}")
                 ("ž" . "{\\\\v{z}}")
                 ("ů" . "{\\\\r{u}}")
+                ("–" . "--")
                 ("‐" . "-"))
               org-ref-nonascii-latex-replacements))
-(delete '("<" . "$<$")
-        org-ref-nonascii-latex-replacements)
 
 (defun org-ref-title-case-article (&optional key start end)
   "Convert a bibtex entry article or book title to title-case.
