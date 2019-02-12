@@ -86,6 +86,16 @@
 (require 'org-ref)
 (setq reftex-default-bibliography '("~/doc/sources.bib"))
 
+(defun my-bibtex-set-key(key)
+  (interactive)
+  ;; first we delete the existing key
+  (bibtex-beginning-of-entry)
+  (re-search-forward bibtex-entry-maybe-empty-head)
+  (if (match-beginning bibtex-key-in-head)
+      (delete-region (match-beginning bibtex-key-in-head)
+                     (match-end bibtex-key-in-head)))
+  (insert key))
+
 (defun my-bibtex-resolve-duplicate()
   (interactive)
   (let ((key (funcall org-ref-clean-bibtex-key-function
@@ -102,15 +112,14 @@
             while (save-excursion (bibtex-search-entry ret))
             do (setq ret (format "%s%c" key c)))
       (setq key ret))
-    (insert key)
-    (kill-new key)))
+    (insert key)))
 
 (require 'biblio-core)
 (require 'biblio-doi)
 (defun my-bibtex-add(doi)
   (interactive "MDOI: ")
   (setq target-buffer (current-buffer))
-    (biblio-doi-forward-bibtex
+  (biblio-doi-forward-bibtex
    (biblio-cleanup-doi doi)
    (lambda (result)
      (message result (messages-buffer))
@@ -121,6 +130,8 @@
        ))
    )
   )
+
+(setq my-bibtex-restore-key nil)
 
 (defun my-bibtex-update()
   (interactive)
@@ -134,7 +145,7 @@
      (message "%s" (error-message-string err))))
   (save-excursion
     (condition-case err
-        (progn 
+        (progn
           (bibtex-end-of-entry)
           (insert "\n\n")
           (delete-blank-lines))
@@ -143,6 +154,36 @@
               (delete-blank-lines)))
       ))
   (call-interactively 'my-bibtex-resolve-duplicate)
+  )
+
+(defun biblio--selection-insert-callback(bibtex entry)
+  (let ((target-buffer biblio--target-buffer))
+    (with-selected-window (or (biblio--target-window) (selected-window))
+      (with-current-buffer target-buffer
+        (insert bibtex "\n\n")
+        (backward-char)
+        (bibtex-beginning-of-entry)
+        (my-bibtex-update)
+        (if my-bibtex-restore-key
+            (my-bibtex-set-key my-bibtex-previous-key))
+        )))
+  (message "Inserted bibtex entry for %S."
+           (biblio--prepare-title (biblio-alist-get 'title entry))))
+
+(defun my-bibtex-update-crossref()
+  (interactive)
+  (bibtex-beginning-of-entry)
+  (when (bibtex-search-forward-field "title")
+    (let* ((title (bibtex-autokey-get-field "title")))
+      (bibtex-beginning-of-entry)
+      (re-search-forward bibtex-entry-maybe-empty-head)
+      (if (match-beginning bibtex-key-in-head)
+          (setq my-bibtex-previous-key (buffer-substring (match-beginning bibtex-key-in-head)
+                                                      (match-end bibtex-key-in-head))))
+      (bibtex-kill-entry)
+      (biblio-crossref-lookup title)
+      )
+    )
   )
 
 (defun org-ref-title-case (&optional key start end)
@@ -243,6 +284,7 @@ all the title entries in articles and books."
   (local-set-key (kbd "C-c a") 'my-bibtex-add)
   (local-set-key (kbd "C-c s") 'bibtex-sort-buffer)
   (local-set-key (kbd "C-c x") 'biblio-crossref-lookup)
+  (local-set-key (kbd "C-c z") 'my-bibtex-update-crossref)
   )
 
 (add-hook 'bibtex-mode-hook 'my-bibtex-mode-config)
