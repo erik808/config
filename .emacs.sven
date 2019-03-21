@@ -393,6 +393,9 @@ all the title entries in articles and books."
 ;; Bracket highlighting
 (show-paren-mode 1)
 
+;; Line endings
+(setq inhibit-eol-conversion 1)
+
 ;; Refresh and disable undo warning when refreshing
 (global-auto-revert-mode 1)
 
