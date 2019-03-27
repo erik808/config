@@ -17,7 +17,7 @@
 (defun install-missing ()
   (interactive)
   ;; list the packages you want
-  (setq package-list '(ample-theme helm elpy jedi multiple-cursors cmake-project magit auctex org-ref company))
+  (setq package-list '(ample-theme helm elpy jedi multiple-cursors cmake-project magit auctex org-ref company matlab-mode openwith))
 
   ;; fetch the list of packages available
   (package-refresh-contents)
@@ -45,6 +45,14 @@
 (global-set-key (kbd "C-x C-f") 'helm-find-files)
 (global-set-key (kbd "C-x C-b") 'helm-buffers-list)
 (setq-default helm-buffer-max-length nil)
+
+(require 'openwith)
+(openwith-mode t)
+(setq openwith-associations '(("\\.pdf\\'" "evince" (file))))
+
+;; Tramp
+(require 'tramp)
+(setq tramp-default-method "ssh")
 
 ;; Don't open 1000000 emacs instances (workflow!!)
 (setq ns-pop-up-frames nil)
