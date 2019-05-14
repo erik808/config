@@ -4,8 +4,9 @@
 (require 'package)
 (add-to-list 'package-archives
              '("melpa" . "http://melpa.org/packages/") t)
-;; (add-to-list 'package-archives
-;;              '("elpy" . "http://jorgenschaefer.github.io/packages/"))
+(add-to-list 'package-archives
+             '("elpy" . "http://jorgenschaefer.github.io/packages/"))
+(package-initialize)
 
 ;; Eval .emacs
 (defun eval-emacs ()
@@ -34,9 +35,6 @@
   (interactive)
   (save-some-buffers)
   (kill-emacs))
-
-;; Initialize packages
-(package-initialize)
 
 (load-file (expand-file-name ".emacs.shared" (file-name-directory load-file-name)))
 
@@ -323,29 +321,6 @@ all the title entries in articles and books."
     (if point
         (goto-char point)
       (message "No non-ascii characters."))))
-
-;; Sorting
-(defun apply-function-to-region (fn)
-  "Apply a function to a region."
-  (interactive "Function to apply to region: ")
-  (save-excursion
-    (let* ((beg (region-beginning))
-           (end (region-end))
-           (resulting-text
-             (funcall fn
-                      (buffer-substring-no-properties beg end))))
-          (kill-region beg end)
-          (insert resulting-text))))
-
-(defun sort-csv (txt)
-  "Sort a comma separated string."
-  (mapconcat 'identity
-             (sort (split-string txt ",") 'string< ) ","))
-
-(defun sort-csv-region ()
-  "Sort a region of comma separated text."
-  (interactive)
-  (apply-function-to-region 'sort-csv))
 
 ;; Disable secondary overlay crap
 (global-unset-key [M-mouse-1])
