@@ -1,11 +1,11 @@
 # remap prefix from 'C-b' to 'C-q'
 unbind C-b
-set-option -g prefix C-q
-bind-key C-q send-prefix
+set-option -g prefix M-q
+bind-key M-q send-prefix
 
 # split panes using | and -
-bind | split-window -h
-bind - split-window -v
+bind | split-window -h -c '#{pane_current_path}'
+bind - split-window -v -c '#{pane_current_path}'
 unbind '"'
 unbind %
 
