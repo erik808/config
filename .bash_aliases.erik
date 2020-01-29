@@ -1,0 +1,12 @@
+function emt()
+         {
+            comstr='emacs '$@' -nw'
+            gnome-terminal -x $comstr &
+            echo $comstr;
+         }
+
+alias em='emacs -nw'
+
+alias up='sudo apt-get update && sudo apt-get dist-upgrade'
+
+alias notes='emacs -nw ~/Dropbox/notes.org'
