@@ -70,6 +70,9 @@
 (setq auto-save-file-name-transforms
       `((".*" ,temporary-file-directory t)))
 
+;; Org
+(add-hook 'org-mode-hook 'visual-line-mode)
+
 ;; LaTeX
 (setq-default TeX-command-default "LaTeX")
 (setq-default TeX-PDF-mode t)
