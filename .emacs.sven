@@ -55,6 +55,9 @@
 ;; Don't open 1000000 emacs instances (workflow!!)
 (setq ns-pop-up-frames nil)
 
+;; Function scope
+(which-function-mode 1)
+
 ;; Fancy replace tjak
 (require 'multiple-cursors)
 (global-set-key (kbd "C->") 'mc/mark-next-like-this)
