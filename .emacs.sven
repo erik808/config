@@ -435,7 +435,8 @@ all the title entries in articles and books."
 (defun switch-style()
   (interactive)
   (let* ((st c-indentation-style)
-         (change (if (string= st "jonas-style") "sven-style" "jonas-style")))
+         (change (if (string= st "jonas-style") "sven-style"
+                   (if (string= st "sven-style" ) "sven2-style" "jonas-style"))))
     (c-set-style change)
     (message "Style switched from %s to %s" st change)
     ))
