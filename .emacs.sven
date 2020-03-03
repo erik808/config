@@ -72,6 +72,7 @@
 
 ;; Org
 (add-hook 'org-mode-hook 'visual-line-mode)
+(add-hook 'org-mode-hook 'turn-on-flyspell)
 
 ;; LaTeX
 (setq-default TeX-command-default "LaTeX")
