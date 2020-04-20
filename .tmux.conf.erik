@@ -13,3 +13,9 @@ set -g mouse on
 
 # share tmux buffer with system clipboard, this requires xclip
 # bind -T copy-mode-vi Enter send-keys -X copy-pipe-and-cancel "xclip -i -f -selection primary | xclip -i -selection clipboard" 
+
+set -s escape-time 0
+
+set -g status-style bg='#121212',fg='default'
+set -g pane-border-style bg='#121212',fg='default'
+set -g pane-active-border-style bg='#121212',fg='default'
