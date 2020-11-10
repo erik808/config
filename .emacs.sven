@@ -83,6 +83,9 @@
 (setq auto-save-file-name-transforms
       `((".*" ,temporary-file-directory t)))
 
+;; Disable lock files (.# symlinks) to prevent sshfs failures
+(setq create-lockfiles nil)
+
 ;; Org
 (add-hook 'org-mode-hook 'visual-line-mode)
 (add-hook 'org-mode-hook 'turn-on-flyspell)
