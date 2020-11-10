@@ -455,16 +455,6 @@ all the title entries in articles and books."
 
 (global-set-key (kbd "<f8>") 'fd-switch-dictionary)
 
-(defun switch-style()
-  (interactive)
-  (let* ((st c-indentation-style)
-         (change (if (string= st "jonas-style") "sven-style"
-                   (if (string= st "sven-style" ) "sven2-style" "jonas-style"))))
-    (c-set-style change)
-    (message "Style switched from %s to %s" st change)
-    ))
-(global-set-key (kbd "<f7>") 'switch-style)
-
 ;; Commenting
 (global-set-key (kbd "C-c c") 'comment-region-lines)
 
@@ -493,6 +483,24 @@ all the title entries in articles and books."
     (c-basic-offset . 2)))
 
 (c-add-style "sven2-style" sven2-style)
+
+(defconst d3d-style
+  '("K&R"
+    (c-offsets-alist . ((innamespace . [0]) (arglist-cont-nonempty . 8)))
+    (c-basic-offset . 4)))
+(c-add-style "d3d-style" d3d-style)
+
+(defun switch-style()
+  (interactive)
+  (let* ((st c-indentation-style)
+         (change (if (string= st "jonas-style") "sven-style"
+                   (if (string= st "sven-style" ) "sven2-style"
+                     (if (string= st "sven2-style" ) "d3d-style"
+                       "jonas-style")))))
+    (c-set-style change)
+    (message "Style switched from %s to %s" st change)
+    ))
+(global-set-key (kbd "<f7>") 'switch-style)
 
 (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
 
