@@ -137,7 +137,7 @@
                        (match-end bibtex-key-in-head)))
     ;; check if the key is in the buffer
     (let ((ret key))
-      (loop for c from ?b to ?z
+      (cl-loop for c from ?b to ?z
             while (save-excursion (bibtex-search-entry ret))
             do (setq ret (format "%s%c" key c)))
       (setq key ret))
@@ -517,6 +517,7 @@ all the title entries in articles and books."
 (custom-set-variables
  '(ansi-color-names-vector
    ["#242424" "#e5786d" "#95e454" "#cae682" "#8ac6f2" "#333366" "#ccaa8f" "#f6f3e8"])
+ '(biblio-synchronous t)
  '(column-number-mode t)
  '(company-idle-delay nil)
  '(company-tooltip-idle-delay nil)
