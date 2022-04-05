@@ -44,6 +44,19 @@
 (global-set-key (kbd "C-x C-b") 'helm-buffers-list)
 (setq-default helm-buffer-max-length nil)
 
+(define-key helm-map (kbd "<left>") 'helm-previous-source)
+(define-key helm-map (kbd "<right>") 'helm-next-source)
+;; for helm-find-files
+(customize-set-variable 'helm-ff-lynx-style-map t)
+;; for helm-imenu
+(customize-set-variable 'helm-imenu-lynx-style-map t)
+;; for semantic
+(customize-set-variable 'helm-semantic-lynx-style-map t)
+;; for helm-occur
+(customize-set-variable 'helm-occur-use-ioccur-style-keys t)
+;; for helm-grep
+(customize-set-variable 'helm-grep-use-ioccur-style-keys t)
+
 (require 'openwith)
 (openwith-mode t)
 (setq openwith-associations '(("\\.pdf\\'" "evince" (file))))
@@ -54,6 +67,9 @@
 
 ;; Don't open 1000000 emacs instances (workflow!!)
 (setq ns-pop-up-frames nil)
+
+;; Function scope
+(which-function-mode 1)
 
 ;; Fancy replace tjak
 (require 'multiple-cursors)
@@ -66,6 +82,13 @@
       `((".*" . ,temporary-file-directory)))
 (setq auto-save-file-name-transforms
       `((".*" ,temporary-file-directory t)))
+
+;; Disable lock files (.# symlinks) to prevent sshfs failures
+(setq create-lockfiles nil)
+
+;; Org
+(add-hook 'org-mode-hook 'visual-line-mode)
+(add-hook 'org-mode-hook 'turn-on-flyspell)
 
 ;; LaTeX
 (setq-default TeX-command-default "LaTeX")
@@ -114,7 +137,7 @@
                        (match-end bibtex-key-in-head)))
     ;; check if the key is in the buffer
     (let ((ret key))
-      (loop for c from ?b to ?z
+      (cl-loop for c from ?b to ?z
             while (save-excursion (bibtex-search-entry ret))
             do (setq ret (format "%s%c" key c)))
       (setq key ret))
@@ -432,15 +455,6 @@ all the title entries in articles and books."
 
 (global-set-key (kbd "<f8>") 'fd-switch-dictionary)
 
-(defun switch-style()
-  (interactive)
-  (let* ((st c-indentation-style)
-         (change (if (string= st "jonas-style") "sven-style" "jonas-style")))
-    (c-set-style change)
-    (message "Style switched from %s to %s" st change)
-    ))
-(global-set-key (kbd "<f7>") 'switch-style)
-
 ;; Commenting
 (global-set-key (kbd "C-c c") 'comment-region-lines)
 
@@ -470,6 +484,24 @@ all the title entries in articles and books."
 
 (c-add-style "sven2-style" sven2-style)
 
+(defconst d3d-style
+  '("K&R"
+    (c-offsets-alist . ((innamespace . [0]) (arglist-cont-nonempty . 8)))
+    (c-basic-offset . 4)))
+(c-add-style "d3d-style" d3d-style)
+
+(defun switch-style()
+  (interactive)
+  (let* ((st c-indentation-style)
+         (change (if (string= st "jonas-style") "sven-style"
+                   (if (string= st "sven-style" ) "sven2-style"
+                     (if (string= st "sven2-style" ) "d3d-style"
+                       "jonas-style")))))
+    (c-set-style change)
+    (message "Style switched from %s to %s" st change)
+    ))
+(global-set-key (kbd "<f7>") 'switch-style)
+
 (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
 
 (defun set-cmake-project-directory()
@@ -493,6 +525,7 @@ all the title entries in articles and books."
 (custom-set-variables
  '(ansi-color-names-vector
    ["#242424" "#e5786d" "#95e454" "#cae682" "#8ac6f2" "#333366" "#ccaa8f" "#f6f3e8"])
+ '(biblio-synchronous t)
  '(column-number-mode t)
  '(company-idle-delay nil)
  '(company-tooltip-idle-delay nil)
