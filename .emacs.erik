@@ -4,12 +4,12 @@
 ;;  - Exuberant ctags
 ;;
 ;; byte recompiling elpa:
-;; (byte-recompile-directory (expand-file-name "~/.emacs.d/elpa") 0 t)
+;; (byte-recompile-directory (expand-file-name "~/.emacs.d/") 0 t)
 ;;===========================================================================
 
 (add-to-list 'load-path "~/.emacs.d/lisp")
-(add-to-list 'load-path "~/.emacs.d/scel/el")
-(add-to-list 'load-path "~/.emacs.d/lisp/matlab-emacs")
+;; (add-to-list 'load-path "~/.emacs.d/scel/el")
+;; (add-to-list 'load-path "~/.emacs.d/lisp/matlab-emacs")
 (add-to-list 'load-path "~/.emacs.d/emacs-color-theme-solarized-master/")
 (add-to-list 'custom-theme-load-path "~/.emacs.d/emacs-color-theme-solarized-master/")
 (add-to-list 'custom-theme-load-path "~/.emacs.d/lisp/")
@@ -65,7 +65,6 @@
 (define-key global-map "\C-cl" 'org-store-link)
 (define-key global-map "\C-ca" 'org-agenda)
 (setq org-log-done t)
-(setq org-agenda-files (list "~/Dropbox/todo.org"))
 
 ;; get tikz pictures to preview
 (eval-after-load "preview"
@@ -85,13 +84,13 @@
 (setq linum-format "%d ")
 
 ;;=============== Matlab/Octave mode ======================
-(load-library "matlab-load")
-(autoload 'matlab-mode "matlab" "Matlab Editing Mode" t)
-(add-to-list
- 'auto-mode-alist
- '("\\.m$" . matlab-mode))
-(setq matlab-indent-function t)
-(setq matlab-shell-command "matlab")
+;;(load-library "matlab-load")
+;;(autoload 'matlab-mode "matlab" "Matlab Editing Mode" t)
+;;(add-to-list
+;; 'auto-mode-alist
+;; '("\\.m$" . matlab-mode))
+;;(setq matlab-indent-function t)
+;;(setq matlab-shell-command "matlab")
 ;;=========================================================
 
 ;;========== printing =====================================
@@ -130,6 +129,7 @@
 
 ;;---------- switch between header and implementation -----
 (global-set-key (kbd "C-c f") 'ff-find-other-file)
+
 ;;---------- expand region --------------------------------
 (require 'expand-region)
 (global-set-key (kbd "C-c e") 'er/expand-region)
@@ -347,8 +347,8 @@
 ;; =====================================
 
 ;; ======== sclang ==============
-(require 'sclang)  ;; ubuntu package: <supercollider>
-;;(require 'w3m)     ;; ubuntu package: <w3m-el>
+;; (require 'sclang)  ;; ubuntu package: <supercollider>
+;; (require 'w3m)     ;; ubuntu package: <w3m-el>
 ;; ==============================
 
 ;; ============ counsel etags ================
@@ -415,5 +415,5 @@
 (require 'ein-notebook)
 (require 'ein-subpackages)
 
-;; ================================= IRC autojoin =====================
-(setq erc-autojoin-channels-alist '(("freenode.net" "#nlesc-smcm" )))
+;; ========== elpy ===========
+;; (elpy-enable)

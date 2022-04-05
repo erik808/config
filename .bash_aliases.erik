@@ -10,3 +10,7 @@ alias em='emacs -nw'
 alias up='sudo apt-get update && sudo apt-get dist-upgrade'
 
 alias notes='emacs -nw ~/Dropbox/notes.org'
+
+alias mat='matlab -nodesktop -nosplash -singleCompThread -softwareopengl'
+
+alias pbcopy='xclip -selection clipboard'
