@@ -460,6 +460,7 @@ all the title entries in articles and books."
 
 ;; Magit
 (global-set-key (kbd "C-c g") 'magit-status)
+(global-set-key (kbd "C-c b") 'magit-blame)
 
 ;; Indenting
 (defconst jonas-style
