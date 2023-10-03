@@ -57,15 +57,15 @@
 (global-set-key (kbd "C-c f") 'ff-find-other-file)
 
 ;;===================== helm ================================
-(require 'helm-config)
-(require 'helm)
+;; (require 'helm-config)
+;; (require 'helm)
 (global-set-key (kbd "M-x") 'helm-M-x)
 (global-set-key (kbd "M-X") 'execute-extended-command)
 (global-set-key (kbd "C-x f") 'helm-for-files)
 (global-set-key (kbd "C-x C-b") 'helm-buffers-list)
 (setq helm-display-header-line nil)
-(set-face-attribute 'helm-source-header nil :height .8)
-(helm-autoresize-mode 1)
+;; (set-face-attribute 'helm-source-header nil :height .8)
+;; (helm-autoresize-mode 1)
 (setq helm-autoresize-max-height 24)
 (setq helm-autoresize-min-height 24)
 
@@ -98,7 +98,7 @@
 (define-key global-map "\M-Q" 'unfill-paragraph)
 
 ;;================ fortran-tags =======================================
-(require 'fortran-tags)
+;; (require 'fortran-tags)
 
 ;;================ octave/matlab syntax highlighting =================
 (setq auto-mode-alist
