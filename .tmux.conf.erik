@@ -16,6 +16,6 @@ set -g mouse on
 
 set -s escape-time 0
 
-set -g status-style bg='#121212',fg='default'
-set -g pane-border-style bg='#121212',fg='default'
-set -g pane-active-border-style bg='#121212',fg='default'
+set -g status-style bg='#323232',fg='default'
+set -g pane-border-style bg='#323232',fg='default'
+set -g pane-active-border-style bg='#323232',fg='default'
