@@ -14,17 +14,17 @@ gsettings set org.gnome.mutter check-alive-timeout 15000
 # synclient ClickFinger3=3
 # synclient TapButton3=3
 
-# adjust font scaling factor based on display
-primaryDisp=$(xrandr -q | grep primary)
+# # adjust font scaling factor based on display
+# primaryDisp=$(xrandr -q | grep primary)
 
-if [[ $primaryDisp == *"eDP-1"* ]];
-then
-    #internal
-    gsettings set org.gnome.desktop.interface text-scaling-factor 1.1
-else
-    #external
-    gsettings set org.gnome.desktop.interface text-scaling-factor 1.0
-fi
+# if [[ $primaryDisp == *"eDP-1"* ]];
+# then
+#     #internal
+#     gsettings set org.gnome.desktop.interface text-scaling-factor 1.1
+# else
+#     #external
+#     gsettings set org.gnome.desktop.interface text-scaling-factor 1.0
+# fi
 
 # poging om headerbar uit te zetten in terminal
 # gsettings set org.gnome.Terminal.Legacy.Settings headerbar false
@@ -38,4 +38,4 @@ gsettings set org.gnome.shell.window-switcher current-workspace-only "true"
 
 
 # conky
-conky -c ~/.conkyrc
+# conky -c ~/.conkyrc
