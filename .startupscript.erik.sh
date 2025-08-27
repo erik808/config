@@ -30,11 +30,11 @@ gsettings set org.gnome.mutter check-alive-timeout 15000
 # gsettings set org.gnome.Terminal.Legacy.Settings headerbar false
 
 # alt-tab behavior
-gsettings set org.gnome.desktop.wm.keybindings switch-applications "['<Super>Tab']"
-gsettings set org.gnome.desktop.wm.keybindings switch-windows "['<Alt>Tab']"
-gsettings set org.gnome.desktop.wm.keybindings switch-applications-backward "['<Shift><Super>Tab']"
-gsettings set org.gnome.desktop.wm.keybindings switch-windows-backward "['<Shift><Alt>Tab']"
-gsettings set org.gnome.shell.window-switcher current-workspace-only "true"
+# gsettings set org.gnome.desktop.wm.keybindings switch-applications "['<Super>Tab']"
+# gsettings set org.gnome.desktop.wm.keybindings switch-windows "['<Alt>Tab']"
+# gsettings set org.gnome.desktop.wm.keybindings switch-applications-backward "['<Shift><Super>Tab']"
+# gsettings set org.gnome.desktop.wm.keybindings switch-windows-backward "['<Shift><Alt>Tab']"
+# gsettings set org.gnome.shell.window-switcher current-workspace-only "true"
 
 
 # conky
